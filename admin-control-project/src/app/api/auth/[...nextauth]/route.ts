@@ -31,8 +31,10 @@ export const authOptions: NextAuthOptions = {
 
                 if (res.status === 401) {
                     console.log(`FALLO ESTE PEDO: ${res.statusText}`);
-
-                    return null;
+                    const body = await res.json();
+                    console.log(`ESTE ES EL ERROR: ${body.message}`);
+                    const message = body.message;
+                    return message;
                 }
 
                 const user = await res.json();

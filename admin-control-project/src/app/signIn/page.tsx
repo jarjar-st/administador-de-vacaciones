@@ -1,7 +1,16 @@
+import Login from '@/components/Login'
 import React from 'react'
 
-export default function SignInPage() {
+type Props = {
+  searchParams?: Record<"callbackUrl"|"error", string>
+}
+
+const SignInPage = (props: Props) => {
   return (
-    <div>SignInPage</div>
+    <div>
+      <Login error={props.searchParams?.error}/>
+    </div>
   )
 }
+
+export default SignInPage
