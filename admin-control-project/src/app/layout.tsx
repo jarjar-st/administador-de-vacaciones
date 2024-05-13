@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes";
 import { ModeToggle } from "@/components/toggle-dark";
 import Providers from "@/components/Providers";
 import { SigninButton } from "@/components/SigninButton";
+import { Toaster } from "react-hot-toast";
+import { Navbar } from "@/components/Navbar";
 
 // const inter = Inter({ subsets: ["latin"] });
 const fontSans = FontSans({
@@ -32,17 +34,15 @@ export default function RootLayout({
           fontSans.variable
         )}>
           <Providers>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ModeToggle />
-            <SigninButton></SigninButton>
-
-            {children}
-          </ThemeProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster position="bottom-center" />
+              {children}
+            </ThemeProvider>
           </Providers>
 
         </body>

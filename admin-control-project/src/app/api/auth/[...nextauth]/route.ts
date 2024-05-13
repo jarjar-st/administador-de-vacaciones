@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
                     const body = await res.json();
                     console.log(`ESTE ES EL ERROR: ${body.message}`);
                     const message = body.message;
-                    return message;
+                    throw new Error(message);
                 }
 
                 const user = await res.json();

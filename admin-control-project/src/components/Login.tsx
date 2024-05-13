@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { toast } from 'react-hot-toast';
 
 
 
@@ -71,9 +72,11 @@ const Login = (props: Props) => {
         if (res?.error) {
             // If there's an error, update the error message state.
             setErrorMessage(res.error);
+            toast.error(`${res.error}`)
         } else {
             // If there's no error, clear the error message state and redirect the user.
             setErrorMessage(null);
+            toast.success('Inicio de sesion exitoso!')
             router.push("/");
         }
     }
@@ -89,11 +92,11 @@ const Login = (props: Props) => {
             <div className=' g-gradient-to-b from-slate-50 to-slate-200 p-2 text-center text-slate-600'>
                 Inicio de Sesion
             </div>
-            {!!errorMessage && (
+            {/* {!!errorMessage && (
                 <p className="bg-red-100 text-red-600 text-center p-2">
                     {errorMessage}
                 </p>
-            )}
+            )} */}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
