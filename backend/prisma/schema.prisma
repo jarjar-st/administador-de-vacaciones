@@ -13,11 +13,89 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+model Personas {
+  Cod_Persona       Int                  @id @default(autoincrement()) 
+  Nombre            String               @db.VarChar(25)
+  Apellido          String               @db.VarChar(25)
+  Identidad         String               @db.VarChar(15)
+  Fecha_Nacimiento  DateTime?
+  Edad              Int?
+  Genero            String               @db.VarChar(25)
+  Estado_Civil      String               @db.VarChar(25)
+  Direccion         String               @db.VarChar(100)
+  Telefonos         Telefonos[]
+  CorreoElectronico Correo_Electronico[]
+  Usuarios          Usuarios[]
+  Empleados         Empleados[]
+}
+
+model Telefonos {
+  Cod_Telefono Int       @id @default(autoincrement())
+  Telefono     Int
+  Cod_Persona  Int
+  Persona      Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
+}
+
+model Correo_Electronico {
+  Cod_Correo  Int       @id @default(autoincrement())
+  Correo      String    @db.VarChar(45)@unique
+  Cod_Persona Int
+  Persona     Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
+}
+
+model Departamento {
+  Cod_Departamento Int         @id @default(autoincrement())
+  Departamento     String      @db.VarChar(45)
+  Empleados        Empleados[]
+}
+
+model Cargo {
+  Cod_Cargo  Int         @id @default(autoincrement())
+  Cargo      String      @db.VarChar(45)
+  Empleados  Empleados[]
+}
+
+model Empleados {
+  Cod_Empleado     Int           @id @default(autoincrement())
+  Cod_Persona      Int
+  Cod_Departamento Int
+  Cod_Cargo        Int
+  Fecha_Contrato   DateTime
+  Persona          Personas      @relation(fields: [Cod_Persona], references: [Cod_Persona])
+  Departamento     Departamento  @relation(fields: [Cod_Departamento], references: [Cod_Departamento])
+  Cargo            Cargo         @relation(fields: [Cod_Cargo], references: [Cod_Cargo])
+}
+
+model Estado_Usuario {
+  Cod_EstadoUsuario Int        @id @default(autoincrement())
+  Descripcion       String     @db.VarChar(45)
+  Usuarios          Usuarios[]
+}
+
+model Roles {
+  Cod_Rol           Int        @id @default(autoincrement())
+  Rol               String     @db.VarChar(45)
+  Descripcion       String     @db.VarChar(45)
+  Fecha_Creacion    DateTime   @map("Fecha_Creacion")
+  Creado_Por        String     @db.VarChar(45)
+  Fecha_Modificacion DateTime  @map("Fecha_Modificacion")
+  Modificado_Por    String     @db.VarChar(45)
+  Usuarios          Usuarios[]
+}
+
+model Usuarios {
+  Cod_Usuario       Int            @id @default(autoincrement())
+  Cod_Persona       Int
+  Cod_EstadoUsuario Int
+  Contrasena        String         @map("Contraseña")@db.VarChar(25)
+  Cod_Rol           Int
+  Intentos_Fallidos String         @db.VarChar(45)
+  Fecha_Creacion    DateTime       @map("Fecha_Creacion")
+  Creado_Por        String         @db.VarChar(45)
+  Fecha_Modificacion DateTime      @map("Fecha_Modificacion")
+  Modificado_Por    String         @db.VarChar(45)
+  Persona           Personas       @relation(fields: [Cod_Persona], references: [Cod_Persona])
+  EstadoUsuario     Estado_Usuario @relation(fields: [Cod_EstadoUsuario], references: [Cod_EstadoUsuario])
+  Rol               Roles          @relation(fields: [Cod_Rol], references: [Cod_Rol])
 }

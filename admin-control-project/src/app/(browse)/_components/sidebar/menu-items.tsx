@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Accordion,
     AccordionContent,
@@ -11,11 +11,18 @@ import { FaLock, FaUmbrellaBeach, FaToolbox, FaFolderOpen, FaBox, FaVideo } from
 import { useSidebar } from "@/store/use-sidebar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 
 export const MenuItems = () => {
     const { collapsed } = useSidebar((state) => state);
     const { onExpand} = useSidebar((state) => state);
+    const [clickedButtonId, setClickedButtonId] = useState(null);
+
+    const handleButtonClick = (buttonId:any) => {
+        setClickedButtonId(clickedButtonId === buttonId ? null : buttonId); // Toggle del estado
+    }
+    
     return (
         <>
             <Accordion type="single" collapsible>
@@ -25,12 +32,30 @@ export const MenuItems = () => {
                             onExpand()
                         }
                     }}><span className=" pl-3 mr-[-20px]"><FaLock /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Seguridad</span></AccordionTrigger>
+
+
                     <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
+                    <Button 
+                        variant={`${clickedButtonId === 'seguridad-usuarios' ? 'default' : 'link'}`}
+                        className={`w-full rounded-none`} 
+                        onClick={() => handleButtonClick('seguridad-usuarios')}
+                    >
+                        <Link href={"/usuarios"}>
+                            Usuario
+                        </Link>
+                    </Button>
                     </AccordionContent>
                     <AccordionContent>
-                        <Button>Algo</Button>
+                    <Button 
+                        variant={`${clickedButtonId === 'seguridad-rol' ? 'default' : 'link'}`}
+                        className={`w-full rounded-none`} 
+                        onClick={() => handleButtonClick('seguridad-rol')}
+                    >
+                        Rol
+                    </Button>
                     </AccordionContent>
+
+
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
@@ -40,7 +65,7 @@ export const MenuItems = () => {
                         Yes. It adheres to the WAI-ARIA design pattern.
                     </AccordionContent>
                     <AccordionContent>
-                        <Button>Algo</Button>
+                        <Button variant={"default"}>Algo</Button>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

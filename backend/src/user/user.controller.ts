@@ -7,7 +7,7 @@ export class UserController {
   constructor(private userService: UserService) {}
   @UseGuards(JwtGuard)
   @Get(':id')
-  async getUserId(@Param('id') id: string) {
+  async getUserId(@Param('id') id: number) {
     return await this.userService.findById(id);
   }
 }
