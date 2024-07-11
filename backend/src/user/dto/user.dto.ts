@@ -54,8 +54,8 @@ class EmpleadoDto {
   @IsInt()
   codCargo: number;
 
-  @IsDate()
-  fechaContrato: Date;
+  @IsString()
+  fechaContrato: string;
 }
 
 // DTO principal para la creación de usuarios
@@ -70,8 +70,8 @@ export class CreateUsuarioDto {
   @IsNumberString()
   identidad: string;
 
-  @IsDate()
-  fechaNacimiento: Date;
+  @IsString()
+  fechaNacimiento: string;
 
   @IsString()
   genero: string;

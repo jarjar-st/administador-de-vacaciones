@@ -10,12 +10,13 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService
   ) {}
+
   async login(dto: LoginUserDto) {
     const user = await this.validateUser(dto);
     const payload = {
-      email: user.email,
+      email: dto.email,
       sub: {
-        name: user.firstName
+        name: user.Persona.Nombre
       }
     };
 
@@ -24,20 +25,21 @@ export class AuthService {
       backendTokens: {
         accessToken: await this.jwtService.signAsync(payload, {
           expiresIn: '1h',
-          secret: process.env.jwtSecretKey
+          secret: process.env.JWT_SECRET_KEY
         }),
         refreshToken: await this.jwtService.signAsync(payload, {
           expiresIn: '7d',
-          secret: process.env.jwtRefreshToken
+          secret: process.env.JWT_REFRESH_SECRET
         })
       }
     };
   }
+
   async validateUser(dto: LoginUserDto) {
     const user = await this.userService.findByEmail(dto.email);
 
-    if (user && (await compare(dto.password, user.password))) {
-      const { password, ...result } = user;
+    if (user && (await compare(dto.password, user.Contrasena))) {
+      const { Contrasena, ...result } = user;
       return result;
     }
     throw new UnauthorizedException('Credenciales incorrectas');
@@ -51,11 +53,11 @@ export class AuthService {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: '1h',
-        secret: process.env.jwtSecretKey
+        secret: process.env.JWT_SECRET_KEY
       }),
       refreshToken: await this.jwtService.signAsync(payload, {
         expiresIn: '7d',
-        secret: process.env.jwtRefreshToken
+        secret: process.env.JWT_REFRESH_SECRET
       })
     };
   }

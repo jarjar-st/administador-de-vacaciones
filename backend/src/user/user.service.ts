@@ -8,6 +8,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateUsuarioDto) {
+    console.log('create method called with dto:', dto);
     // Verificar si el correo ya está en uso en CorreoElectronico
     const existingEmail = await this.prisma.correo_Electronico.findUnique({
       where: {
@@ -58,6 +59,7 @@ export class UserService {
     });
 
     // Crear el usuario asociado a la persona
+
     const usuario = await this.prisma.usuarios.create({
       data: {
         Cod_Persona: persona.Cod_Persona,
@@ -71,6 +73,8 @@ export class UserService {
         Modificado_Por: dto.usuario.modificadoPor || dto.usuario.creadoPor
       }
     });
+
+    console.log('Usuario created with ID:', usuario.Cod_Usuario);
 
     // Retornar el resultado sin la contraseña
     const { Contrasena, ...result } = usuario;
@@ -101,5 +105,9 @@ export class UserService {
       where: { Cod_Usuario: id },
       include: { Persona: true, Rol: true, EstadoUsuario: true }
     });
+  }
+
+  async findAll() {
+    return this.prisma.personas.findMany();
   }
 }

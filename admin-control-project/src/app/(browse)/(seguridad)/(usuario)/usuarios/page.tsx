@@ -1,39 +1,38 @@
-import { Payment, columns } from "./columns"
+
+import TablaUsuarios from "."
+import { columns } from "./columns"
+import FormUsuario from "./components/form-usuario"
 import { DataTable } from "./data-table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 
 
-async function getData(): Promise<Payment[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    },
-    {
-      id: "728ed52g",
-      amount: 100,
-      status: "success",
-      email: "m@example.com",
-    },
-    {
-      id: "728ed52g",
-      amount: 100,
-      status: "success",
-      email: "m@example.com",
-    },
-    // ...
-  ]
-}
+export default async function UsuariosPage() {
 
-export default async function DemoPage() {
-  const data = await getData()
+
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <Dialog>
+        <DialogTrigger>Open</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              <FormUsuario/>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <TablaUsuarios />
     </div>
   )
 }
