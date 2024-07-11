@@ -82,6 +82,10 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
+    if (!email) {
+      throw new BadRequestException('Email is required');
+    }
+
     // Encontrar el usuario por correo electrónico en CorreoElectronico y luego obtener la persona
     const correo = await this.prisma.correo_Electronico.findFirst({
       where: { Correo: email },
@@ -92,11 +96,22 @@ export class UserService {
       throw new BadRequestException('Usuario no encontrado');
     }
 
-    // Buscar el usuario asociado a la persona
-    return this.prisma.usuarios.findFirst({
-      where: { Cod_Persona: correo.Cod_Persona },
-      include: { Persona: true, Rol: true, EstadoUsuario: true }
-    });
+    const persona = correo.Persona;
+
+    console.log(persona.Cod_Persona);
+
+    try {
+      // Buscar el usuario asociado a la persona
+      const usuario = await this.prisma.usuarios.findFirst({
+        where: { Cod_Persona: persona.Cod_Persona },
+        include: { Persona: true, Rol: true, EstadoUsuario: true }
+      });
+      console.log(usuario);
+      return usuario;
+    } catch (error) {
+      console.error('Error al buscar el usuario:', error);
+      throw new BadRequestException('Error al buscar el usuario');
+    }
   }
 
   async findById(id: number) {

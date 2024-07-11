@@ -1,8 +1,26 @@
 import { Backend_URL } from "@/lib/constants";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { stringify } from "querystring";
+
+// async function refreshToken(token: JWT): Promise<JWT> {
+//     const res = await fetch(Backend_URL + "/auth/refresh", {
+//       method: "POST",
+//       headers: {
+//         authorization: `Refresh ${token.backendTokens.refreshToken}`,
+//       },
+//     });
+//     console.log("refreshed");
+  
+//     const response = await res.json();
+  
+//     return {
+//       ...token,
+//       backendTokens: response,
+//     };
+//   }
 
 export const authOptions: NextAuthOptions = {
     providers: [
