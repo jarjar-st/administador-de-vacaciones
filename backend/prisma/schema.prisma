@@ -88,7 +88,7 @@ model Usuarios {
   Cod_Usuario       Int            @id @default(autoincrement())
   Cod_Persona       Int
   Cod_EstadoUsuario Int
-  Contrasena        String         @map("Contraseña")@db.VarChar(25)
+  Contrasena        String         @map("Contraseña")
   Cod_Rol           Int
   Intentos_Fallidos String         @db.VarChar(45)
   Fecha_Creacion    DateTime       @map("Fecha_Creacion")

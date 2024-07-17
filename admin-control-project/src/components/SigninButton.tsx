@@ -1,23 +1,28 @@
 "use client"
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react'
+import { Button } from './ui/button';
 
 export const SigninButton = () => {
     const { data: session } = useSession();
+    const handleSignOut = async () => {
+        await signOut({ redirect: false, callbackUrl: "/signIn" });
+        window.location.reload();
+    };
 
     if (session && session.user) {
         return (
             <div className=' flex gap-4 ml-auto'>
                 <p className=' text-sky-600'>
-                    {session.user.name}
+                    {session.user.Persona.Nombre}
                 </p>
-                <Link
-                    href={"/api/auth/signout"}
+                <Button
+                    onClick={handleSignOut}
                     className="flex gap-4 ml-auto text-red-600"
                 >
                     Cerrar Sesión
-                </Link>
+                </Button>
 
             </div>
         )

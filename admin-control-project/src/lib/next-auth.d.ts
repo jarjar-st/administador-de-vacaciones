@@ -4,32 +4,91 @@ import { JWT } from "next-auth/jwt";
 declare module "next-auth" {
   interface Session {
     user: {
-      id: number;
-      email: string;
-      name: string;
+      Cod_Usuario: number;
+      Cod_Persona: number;
+      Cod_EstadoUsuario: number;
+      Cod_Rol: number;
+      Intentos_Fallidos: string;
+      Fecha_Creacion: string;
+      Creado_Por: string;
+      Fecha_Modificacion: string;
+      Modificado_Por: string;
+      Persona: {
+        Cod_Persona: number;
+        Nombre: string;
+        Apellido: string;
+        Identidad: string;
+        Fecha_Nacimiento: string;
+        Edad: number | null;
+        Genero: string;
+        Estado_Civil: string;
+        Direccion: string;
+      };
+      Rol: {
+        Cod_Rol: number;
+        Rol: string;
+        Descripcion: string;
+        Fecha_Creacion: string;
+        Creado_Por: string;
+        Fecha_Modificacion: string;
+        Modificado_Por: string;
+      };
+      EstadoUsuario: {
+        Cod_EstadoUsuario: number;
+        Descripcion: string;
+      };
     };
 
     backendTokens: {
       accessToken: string;
       refreshToken: string;
-    //   expiresIn: number;
+      expiresIn: number;
     };
   }
 }
 
-
 declare module "next-auth/jwt" {
   interface JWT {
     user: {
-      id: number;
-      email: string;
-      name: string;
+      Cod_Usuario: number;
+      Cod_Persona: number;
+      Cod_EstadoUsuario: number;
+      Cod_Rol: number;
+      Intentos_Fallidos: string;
+      Fecha_Creacion: string;
+      Creado_Por: string;
+      Fecha_Modificacion: string;
+      Modificado_Por: string;
+      Persona: {
+        Cod_Persona: number;
+        Nombre: string;
+        Apellido: string;
+        Identidad: string;
+        Fecha_Nacimiento: string;
+        Edad: number | null;
+        Genero: string;
+        Estado_Civil: string;
+        Direccion: string;
+      };
+      Rol: {
+        Cod_Rol: number;
+        Rol: string;
+        Descripcion: string;
+        Fecha_Creacion: string;
+        Creado_Por: string;
+        Fecha_Modificacion: string;
+        Modificado_Por: string;
+      };
+      EstadoUsuario: {
+        Cod_EstadoUsuario: number;
+        Descripcion: string;
+      };
     };
 
     backendTokens: {
       accessToken: string;
       refreshToken: string;
-    //   expiresIn: number;
+      expiresIn: number;
     };
   }
 }
