@@ -15,7 +15,7 @@ datasource db {
 
 
 model Personas {
-  Cod_Persona       Int                  @id @default(autoincrement()) 
+  Cod_Persona       Int                  @id @default(autoincrement())
   Nombre            String               @db.VarChar(25)
   Apellido          String               @db.VarChar(25)
   Identidad         String               @db.VarChar(15)
@@ -39,7 +39,7 @@ model Telefonos {
 
 model Correo_Electronico {
   Cod_Correo  Int       @id @default(autoincrement())
-  Correo      String    @db.VarChar(45)@unique
+  Correo      String    @db.VarChar(45) @unique
   Cod_Persona Int
   Persona     Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
 }
@@ -82,6 +82,29 @@ model Roles {
   Fecha_Modificacion DateTime  @map("Fecha_Modificacion")
   Modificado_Por    String     @db.VarChar(45)
   Usuarios          Usuarios[]
+  Accesses          Accesses[]
+}
+
+model Accesses {
+  Cod_Access        Int        @id @default(autoincrement())
+  Cod_Rol           Int
+  Cod_Object        Int
+  Ind_Module        Boolean    @default(false)
+  Ind_Insert        Boolean    @default(false)
+  Ind_Select        Boolean    @default(false)
+  Ind_Update        Boolean    @default(false)
+  Ind_Delete        Boolean    @default(false)
+  Rol               Roles      @relation(fields: [Cod_Rol], references: [Cod_Rol])
+  Object            Objects    @relation(fields: [Cod_Object], references: [Cod_Object])
+}
+
+model Objects {
+  Cod_Object        Int        @id @default(autoincrement())
+  Nom_Object        String     @db.VarChar(255)
+  Tip_Object        String     @db.VarChar(255)
+  Des_Object        String     @db.VarChar(255)
+  Ind_Object        Boolean    @default(false)
+  Accesses          Accesses[]
 }
 
 model Usuarios {

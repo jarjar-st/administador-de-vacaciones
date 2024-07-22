@@ -1,9 +1,9 @@
 
 import { Button } from "@/components/ui/button"
-import TablaUsuarios from "."
+import TablaRoles from "."
 import { columns } from "./columns"
 import FormUsuario from "./components/form-usuario"
-import { DataTable } from "./data-table"
+import { DataTableRol } from "./data-table"
 import {
   Dialog,
   DialogContent,

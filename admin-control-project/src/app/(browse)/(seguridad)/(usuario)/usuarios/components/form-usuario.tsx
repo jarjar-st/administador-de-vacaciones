@@ -1,10 +1,17 @@
-"use client"
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { Backend_URL } from "@/lib/constants";
+import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 const FormUsuario = () => {
+    const [loading, setLoading] = useState(false);
+    const { data: session, status } = useSession();
+
     const handleAddUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
         const formData = new FormData(e.currentTarget);
 
         // Inicializa los arrays
@@ -68,44 +75,109 @@ const FormUsuario = () => {
         }
 
         console.log(newUser);
+        console.log('TOKEEEEEN', session?.backendTokens.accessToken);
 
-        const response = await fetch(`${Backend_URL}/usuarios/registrar-usuario`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newUser),
-        });
+        try {
+            const response = await fetch(`${Backend_URL}/usuarios/registrar-usuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.backendTokens.accessToken}`,
+                },
+                body: JSON.stringify(newUser),
+            });
 
-        if (!response.ok) { // Verifica si el estado de la respuesta no es exitoso
-            const errorResponse = await response.json(); // Convierte la respuesta en JSON
-            console.log(`Error: ${errorResponse.message}, Status Code: ${errorResponse.statusCode}`);
-        } else {
-            console.log('Usuario registrado con éxito');
-            // Aquí puedes manejar la respuesta exitosa, por ejemplo, redirigir al usuario o mostrar un mensaje de éxito
+            if (!response.ok) { 
+                const errorResponse = await response.json(); 
+                toast.error(`Error: ${errorResponse.message}`);
+            } else {
+                toast.success('Usuario registrado con exito!')
+            }
+        } catch (error) {
+            toast.error('Error al registrar el usuario');
+        } finally {
+            setLoading(false);
         }
-        console.log(response);
     };
 
     return (
-        <div>
-            <form onSubmit={handleAddUser}>
-                <input type="text" name="nombre" placeholder="Nombre" required />
-                <input type="text" name="apellido" placeholder="Apellido" required />
-                <input type="text" name="identidad" placeholder="Identidad" required />
-                <input type="date" name="fechaNacimiento" placeholder="Fecha de Nacimiento" />
-                <input type="text" name="genero" placeholder="Género" required />
-                <input type="text" name="estadoCivil" placeholder="Estado Civil" required />
-                <input type="text" name="direccion" placeholder="Dirección" required />
-                <input type="text" name="telefonos[0].telefono" placeholder="Teléfono" required />
-                <input type="email" name="correosElectronicos[0].correo" placeholder="Correo Electrónico" required />
-                <input type="number" name="empleado.codDepartamento" placeholder="Código de Departamento" required />
-                <input type="number" name="empleado.codCargo" placeholder="Código de Cargo" required />
-                <input type="date" name="empleado.fechaContrato" placeholder="Fecha de Contrato" required />
-                <input type="password" name="usuario.contrasena" placeholder="Contraseña" required />
-                <input type="number" name="usuario.codRol" placeholder="Código de Rol" required />
-                <input type="number" name="usuario.codEstadoUsuario" placeholder="Código de Estado de Usuario" required />
-                <button type="submit">Agregar</button>
+        <div className="flex justify-center">
+            <form onSubmit={handleAddUser} className="grid grid-cols-2 gap-4 w-full max-w-lg">
+                <div>
+                    <label htmlFor="nombre" className="block">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="apellido" className="block">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Apellido" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="identidad" className="block">Identidad</label>
+                    <input type="text" id="identidad" name="identidad" placeholder="Identidad" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="fechaNacimiento" className="block">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" placeholder="Fecha de Nacimiento" className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="genero" className="block">Género</label>
+                    <select id="genero" name="genero" required className="w-full">
+                        <option value="" disabled selected>Seleccione Género</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="masculino">Masculino</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="estadoCivil" className="block">Estado Civil</label>
+                    <select id="estadoCivil" name="estadoCivil" required className="w-full" >
+                        <option value="" disabled selected>Seleccione Estado Civil</option>
+                        <option value="soltero">Soltero</option>
+                        <option value="casado">Casado</option>
+                        <option value="divorciado">Divorciado</option>
+                        <option value="viudo">Viudo</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="direccion" className="block">Dirección</label>
+                    <textarea id="direccion" name="direccion" placeholder="Dirección" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="telefono" className="block">Teléfono</label>
+                    <input type="text" id="telefono" name="telefonos[0].telefono" placeholder="Teléfono" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="correo" className="block">Correo Electrónico</label>
+                    <input type="email" id="correo" name="correosElectronicos[0].correo" placeholder="Correo Electrónico" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="codDepartamento" className="block">Código de Departamento</label>
+                    <input type="number" id="codDepartamento" name="empleado.codDepartamento" placeholder="Código de Departamento" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="codCargo" className="block">Código de Cargo</label>
+                    <input type="number" id="codCargo" name="empleado.codCargo" placeholder="Código de Cargo" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="fechaContrato" className="block">Fecha de Contrato</label>
+                    <input type="date" id="fechaContrato" name="empleado.fechaContrato" placeholder="Fecha de Contrato" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="contrasena" className="block">Contraseña</label>
+                    <input type="password" id="contrasena" name="usuario.contrasena" placeholder="Contraseña" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="codRol" className="block">Código de Rol</label>
+                    <input type="number" id="codRol" name="usuario.codRol" placeholder="Código de Rol" required className="w-full" />
+                </div>
+                <div>
+                    <label htmlFor="codEstadoUsuario" className="block">Código de Estado de Usuario</label>
+                    <input type="number" id="codEstadoUsuario" name="usuario.codEstadoUsuario" placeholder="Código de Estado de Usuario" required className="w-full" />
+                </div>
+                <div className="col-span-2 flex justify-center mt-4">
+                    <Button type="submit" disabled={loading}>
+                        {loading ? 'Procesando...' : 'Agregar'}
+                    </Button>
+                </div>
             </form>
         </div>
     );

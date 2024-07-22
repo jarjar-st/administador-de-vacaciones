@@ -12,52 +12,57 @@ import { useSidebar } from "@/store/use-sidebar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import Auth from '@/components/Auth';
 
 
 export const MenuItems = () => {
     const { collapsed } = useSidebar((state) => state);
-    const { onExpand} = useSidebar((state) => state);
+    const { onExpand } = useSidebar((state) => state);
     const [clickedButtonId, setClickedButtonId] = useState(null);
 
-    const handleButtonClick = (buttonId:any) => {
+    const handleButtonClick = (buttonId: any) => {
         setClickedButtonId(clickedButtonId === buttonId ? null : buttonId); // Toggle del estado
     }
-    
+
     return (
         <>
-            <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                    <AccordionTrigger onClick={() => {
-                        if (collapsed) {
-                            onExpand()
-                        }
-                    }}><span className=" pl-3 mr-[-20px]"><FaLock /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Seguridad</span></AccordionTrigger>
+            <Auth roles={['admin']}>
+                <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger onClick={() => {
+                            if (collapsed) {
+                                onExpand()
+                            }
+                        }}><span className=" pl-3 mr-[-20px]"><FaLock /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Seguridad</span></AccordionTrigger>
 
 
-                    <AccordionContent>
-                    <Button 
-                        variant={`${clickedButtonId === 'seguridad-usuarios' ? 'default' : 'link'}`}
-                        className={`w-full rounded-none`} 
-                        onClick={() => handleButtonClick('seguridad-usuarios')}
-                    >
-                        <Link href={"/usuarios"}>
-                            Usuario
-                        </Link>
-                    </Button>
-                    </AccordionContent>
-                    <AccordionContent>
-                    <Button 
-                        variant={`${clickedButtonId === 'seguridad-rol' ? 'default' : 'link'}`}
-                        className={`w-full rounded-none`} 
-                        onClick={() => handleButtonClick('seguridad-rol')}
-                    >
-                        Rol
-                    </Button>
-                    </AccordionContent>
+                        <AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'seguridad-usuarios' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('seguridad-usuarios')}
+                            >
+                                <Link href={"/usuarios"}>
+                                    Usuario
+                                </Link>
+                            </Button>
+                        </AccordionContent>
 
 
-                </AccordionItem>
-            </Accordion>
+                        <AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'seguridad-rol' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('seguridad-rol')}
+                            >
+                                Rol
+                            </Button>
+                        </AccordionContent>
+
+
+                    </AccordionItem>
+                </Accordion>
+            </Auth>
             <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaVideo /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Reserva de Video</span></AccordionTrigger>
