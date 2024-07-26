@@ -47,6 +47,8 @@ export const authOptions: NextAuthOptions = {
                     },
                 });
 
+                console.log(`ESTE ES EL RES 1111111: ${JSON.stringify(res, null, 2)}`);
+
                 if (res.status === 401) {
                     console.log(`FALLO ESTE PEDO: ${res.statusText}`);
                     const body = await res.json();

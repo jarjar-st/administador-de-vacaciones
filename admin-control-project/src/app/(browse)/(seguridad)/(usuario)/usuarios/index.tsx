@@ -11,7 +11,7 @@ async function getData(): Promise<Usuarios[]> {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
       const data: Usuarios[] = await response.json();
-      console.log(data);
+      console.log('ESTOS SON LOS USUARIOS', data);
       return data;
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -26,6 +26,7 @@ async function getData(): Promise<Usuarios[]> {
       const newData = await getData();
       setData(newData);
     }
+    console.log('ESTOS SON LOS DATOS', data);
   
     useEffect(() => {
       loadData();

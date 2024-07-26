@@ -18,7 +18,8 @@ export class AuthService {
     const payload = {
       email: dto.email,
       sub: {
-        name: user.Persona.Nombre
+        name: user.Persona.Nombre,
+        roles: user.Rol.Rol
       },
       roles: user.Rol.Rol
     };

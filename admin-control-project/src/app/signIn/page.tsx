@@ -7,7 +7,7 @@ type Props = {
 
 const SignInPage = (props: Props) => {
   return (
-    <div>
+    <div className='flex justify-center items-center min-h-screen bg-slate-800'>
       <Login error={props.searchParams?.error}/>
     </div>
   )

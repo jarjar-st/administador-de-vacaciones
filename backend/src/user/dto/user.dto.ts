@@ -13,92 +13,92 @@ import { Type } from 'class-transformer';
 // DTO para los teléfonos
 class TelefonoDto {
   @IsNumberString()
-  telefono: string;
+  Telefono: string;
 }
 
 // DTO para los correos electrónicos
 class CorreoElectronicoDto {
   @IsEmail()
-  correo: string;
+  Correo: string;
 }
 
 // DTO para los datos del usuario
 class UsuarioDto {
   @IsString()
   @IsOptional()
-  contrasena?: string;
+  Contrasena?: string;
 
   @IsInt()
-  codRol: number;
+  Cod_Rol: number;
 
   @IsInt()
-  codEstadoUsuario: number;
+  Cod_EstadoUsuario: number;
 
   @IsInt()
   @IsOptional()
-  intentosFallidos?: number;
+  Intentos_Fallidos?: number;
 
   @IsString()
-  creadoPor: string;
+  Creado_Por: string;
 
   @IsOptional()
   @IsString()
-  modificadoPor?: string;
+  Modificado_Por?: string;
 }
 
 // DTO para los datos del empleado
 class EmpleadoDto {
   @IsInt()
-  codDepartamento: number;
+  Cod_Departamento: number;
 
   @IsInt()
-  codCargo: number;
+  Cod_Cargo: number;
 
   @IsString()
-  fechaContrato: string;
+  Fecha_Contrato: string;
 }
 
 // DTO principal para la creación de usuarios
 export class CreateUsuarioDto {
   // Datos de la Persona
   @IsString()
-  nombre: string;
+  Nombre: string;
 
   @IsString()
-  apellido: string;
+  Apellido: string;
 
   @IsNumberString()
-  identidad: string;
+  Identidad: string;
 
   @IsString()
-  fechaNacimiento: string;
+  Fecha_Nacimiento: string;
 
   @IsString()
-  genero: string;
+  Genero: string;
 
   @IsString()
-  estadoCivil: string;
+  Estado_Civil: string;
 
   @IsString()
-  direccion: string;
+  Direccion: string;
 
   @ValidateNested({ each: true })
   @Type(() => TelefonoDto)
   @IsArray()
-  telefonos: TelefonoDto[];
+  Telefonos: TelefonoDto[];
 
   @ValidateNested({ each: true })
   @Type(() => CorreoElectronicoDto)
   @IsArray()
-  correosElectronicos: CorreoElectronicoDto[];
+  CorreoElectronico: CorreoElectronicoDto[];
 
   // Datos de la Cuenta de Usuario
   @ValidateNested()
   @Type(() => UsuarioDto)
-  usuario: UsuarioDto;
+  Usuarios: UsuarioDto;
 
   // Datos del Empleado
   @ValidateNested()
   @Type(() => EmpleadoDto)
-  empleado: EmpleadoDto;
+  Empleados: EmpleadoDto;
 }

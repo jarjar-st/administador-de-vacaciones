@@ -1,6 +1,6 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -22,12 +22,35 @@ import FormUsuario from "./components/form-usuario"
 
 
 export type Usuarios = {
-  id: number
-  Identidad: string
-  Nombre: string
-  Apellido: string
-  Genero: string
-  Fecha_Nacimiento: string
+  Cod_Persona: number;
+  Nombre: string;
+  Apellido: string;
+  Identidad: string;
+  Fecha_Nacimiento: string;
+  Genero: string;
+  Estado_Civil: string;
+  Direccion: string;
+  Telefonos: [{
+    Telefono: string;
+  }];
+  CorreoElectronico: [{
+    Correo: string;
+  }];
+  Empleados: {
+    Cod_Departamento: number;
+    Cod_Cargo: number;
+    Fecha_Contrato: string;
+  };
+  Usuarios: {
+    Contrasena: string;
+    Cod_Rol: number;
+    Cod_EstadoUsuario: number;
+    Intentos_Fallidos: number;
+    Creado_Por: string;
+    Modificado_Por: string;
+
+  }
+
 }
 
 const calculateAge = (birthDate: string) => {
@@ -42,6 +65,92 @@ const calculateAge = (birthDate: string) => {
 }
 
 export const columns: ColumnDef<Usuarios>[] = [
+
+  {
+    accessorKey: "Nombre",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-primary"
+        >
+          Nombre
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "Apellido",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-primary"
+        >
+          Apellido
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "Identidad",
+    header: () => {
+      return (
+        <div
+          className="text-primary"
+        >
+          Identidad
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "Usuarios",
+    header: () => {
+      return (
+        <div
+          className="text-primary"
+        >
+          test
+        </div>
+      )
+    },
+    cell: ({ row }) => {
+      // Accede a la propiedad "Usuarios" del objeto "row.original" (que representa la fila actual)
+      // y mapea cada usuario a una cadena que contiene el "Cod_Usuario" y "Cod_Rol",
+      // luego une estas cadenas con comas para mostrarlas en la celda.
+      return row.original.Usuarios.map(usuario => ` Cod_Rol: ${usuario.Cod_Rol}`).join(', ');
+    },
+  },
+  {
+    accessorKey: "Genero",
+    header: () => {
+      return (
+        <div
+          className="text-primary"
+        >
+          Genero
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "Fecha_Nacimiento",
+    header: () => {
+      return (
+        <div
+          className="text-primary"
+        >
+          Edad
+        </div>
+      )
+    },
+    cell: ({ row }) => `${calculateAge(row.original.Fecha_Nacimiento)} años`,
+  },
   {
     id: "actions",
     cell: ({ row }) => {
@@ -50,9 +159,10 @@ export const columns: ColumnDef<Usuarios>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+            <Button variant="ghost" className="h-8 w-8 p-0 text-primary">
+              {/* <span className="sr-only">Open menu</span> */}
+              <Pencil></Pencil>
+              {/* <MoreHorizontal className="h-4 w-4" /> */}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -70,7 +180,7 @@ export const columns: ColumnDef<Usuarios>[] = [
                 <DialogHeader>
                   <DialogTitle>Editar Usuario</DialogTitle>
                   <DialogDescription>
-                    {/* <FormUsuario usuario={usuario} onSuccess={() => location.reload()}/> */}
+                    <FormUsuario usuario={usuario} onSuccess={() => location.reload()} />
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
@@ -91,46 +201,5 @@ export const columns: ColumnDef<Usuarios>[] = [
         </DropdownMenu>
       )
     },
-  },
-  {
-    accessorKey: "Nombre",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nombre
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
-    accessorKey: "Apellido",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Apellido
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
-    accessorKey: "Identidad",
-    header: "Identidad",
-  },
-  {
-    accessorKey: "Genero",
-    header: "Genero",
-  },
-  {
-    accessorKey: "Fecha_Nacimiento",
-    header: "Edad",
-    cell: ({ row }) => `${calculateAge(row.original.Fecha_Nacimiento)} años`,
   },
 ]

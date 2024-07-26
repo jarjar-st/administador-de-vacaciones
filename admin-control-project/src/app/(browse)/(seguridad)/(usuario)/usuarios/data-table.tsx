@@ -23,6 +23,16 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import FormUsuario from "./components/form-usuario"
+
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
@@ -56,7 +66,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center py-4">
+            <div className="flex items-center justify-between py-4">
 
                 <Input
                     placeholder="Filter "
@@ -64,6 +74,25 @@ export function DataTable<TData, TValue>({
                     onChange={event => setGlobalFilter(event.target.value)}
                     className="max-w-sm"
                 />
+
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant={"default"}>Agregar</Button>
+                        </DialogTrigger>
+                        <DialogContent className=" z-[90]">
+                            <DialogHeader className="text-center justify-center items-center w-full h-10">
+                                <DialogTitle>
+                                    
+                                        Datos Del Usuario
+                                    
+                                </DialogTitle>
+                                <DialogDescription>
+                                </DialogDescription>
+                            </DialogHeader>
+                            <FormUsuario />
+
+                        </DialogContent>
+                    </Dialog>
             </div>
             <div className="rounded-md border">
                 <Table>

@@ -18,6 +18,14 @@ import { Input } from "@/components/ui/input"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { toast } from 'react-hot-toast';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 
 
@@ -88,48 +96,64 @@ const Login = (props: Props) => {
     //     </div>
     // )
     return (
-        <div className={props.className}>
-            <div className=' g-gradient-to-b from-slate-50 to-slate-200 p-2 text-center text-slate-600'>
-                Inicio de Sesion
-            </div>
-            {/* {!!errorMessage && (
+        <Card className="w-[550px]">
+            <CardHeader className=" flex justify-center items-center">
+                <img src="/logo1.png" alt="logo" className="w-20 h-20" />
+                <CardTitle>Inicio de Sesion</CardTitle>
+                {/* <CardDescription>Card Description</CardDescription> */}
+            </CardHeader>
+            <CardContent>
+                <div className={props.className}>
+                    <div className=' g-gradient-to-b from-slate-50 to-slate-200 p-2 text-center text-slate-600'>
+                        Inicio de Sesion
+                    </div>
+                    {/* {!!errorMessage && (
                 <p className="bg-red-100 text-red-600 text-center p-2">
                     {errorMessage}
                 </p>
             )} */}
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Correo</FormLabel>
-                                <FormControl>
-                                    <Input type="email" placeholder="ejemplo@ejemplo.com" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Contraseña</FormLabel>
-                                <FormControl>
-                                    <Input type="password" placeholder="*****" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit">Ingresar</Button>
-                </form>
-            </Form>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Correo</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" placeholder="ejemplo@ejemplo.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Contraseña</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" placeholder="*****" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <div className=" flex justify-center items-center">
+                                <Button type="submit">Ingresar</Button>
+                            </div>
 
-        </div>
+                        </form>
+                    </Form>
+
+                </div>
+            </CardContent>
+            {/* <CardFooter>
+                <p>Card Footer</p>
+            </CardFooter> */}
+        </Card>
+
 
     )
 }

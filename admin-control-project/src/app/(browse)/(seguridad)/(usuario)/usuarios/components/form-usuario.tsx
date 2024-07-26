@@ -1,81 +1,191 @@
 "use client";
-import React, { useState } from 'react';
-import { Backend_URL } from "@/lib/constants";
+
+import { useEffect, useState } from 'react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFieldArray } from "react-hook-form";
+import { z } from "zod";
 import { Button } from '@/components/ui/button';
-import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { Input } from "@/components/ui/input";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Backend_URL } from '@/lib/constants';
 
-const FormUsuario = () => {
-    const [loading, setLoading] = useState(false);
-    const { data: session, status } = useSession();
+interface Departamento {
+    Cod_Departamento: number;
+    Departamento: string;
+    id: number;
+    nombre: string;
+}
 
-    const handleAddUser = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        const formData = new FormData(e.currentTarget);
+interface Cargo {
+    Cod_Cargo: number;
+    Cargo: string;
+    id: number;
+    nombre: string;
+}
 
-        // Inicializa los arrays
-        const telefonos = [];
-        const correosElectronicos = [];
+interface Rol {
+    Cod_Rol: number;
+    Rol: string;
+    id: number;
+    nombre: string;
+}
 
-        // Recoge todos los teléfonos
-        let i = 0;
-        while (formData.get(`telefonos[${i}].telefono`)) {
-            telefonos.push({ telefono: formData.get(`telefonos[${i}].telefono`) });
-            i++;
+const userSchema = z.object({
+    Nombre: z.string().min(1, "Nombre es requerido"),
+    Apellido: z.string().min(1, "Apellido es requerido"),
+    Identidad: z.string().min(1, "Identidad es requerida"),
+    Fecha_Nacimiento: z.string().optional(),
+    Genero: z.string().min(1, "Género es requerido"),
+    Estado_Civil: z.string().min(1, "Estado civil es requerido"),
+    Direccion: z.string().min(1, "Dirección es requerida"),
+    Telefonos: z.array(z.object({
+        Telefono: z.string().min(1, "Teléfono es requerido"),
+    })),
+    CorreoElectronico: z.array(z.object({
+        Correo: z.string().email("Correo electrónico inválido"),
+    })),
+    Empleados: z.object({
+        Cod_Departamento: z.number().min(1, "Código de Departamento es requerido"),
+        Cod_Cargo: z.number().min(1, "Código de Cargo es requerido"),
+        Fecha_Contrato: z.string().optional(),
+    }),
+    Usuarios: z.object({
+        Contrasena: z.string().min(1, "Contraseña es requerida"),
+        Cod_Rol: z.number().min(1, "Código de Rol es requerido"),
+        Cod_EstadoUsuario: z.number().min(1, "Código de Estado de Usuario es requerido"),
+        Intentos_Fallidos: z.number().optional(),
+        Creado_Por: z.string().optional(),
+        Modificado_Por: z.string().optional(),
+    })
+});
+
+interface FormularioUsuarioProps {
+    usuario?:{
+        Nombre: string;
+        Apellido: string;
+        Identidad: string;
+        Fecha_Nacimiento: string;
+        Genero: string;
+        Estado_Civil: string;
+        Direccion: string;
+        Telefonos: [{
+          Telefono: string;
+        }];
+        CorreoElectronico: [{
+          Correo: string;
+        }];
+        Empleados: {
+          Cod_Departamento: number;
+          Cod_Cargo: number;
+          Fecha_Contrato: string;
+        };
+        Usuarios: {
+          Contrasena: string;
+          Cod_Rol: number;
+          Cod_EstadoUsuario: number;
+          Intentos_Fallidos: number;
+          Creado_Por: string;
+          Modificado_Por: string;
+      
         }
+    };
+    onSuccess?: () => void;
+}
 
-        // Recoge todos los correos electrónicos
-        i = 0; // Reinicia el contador para correos electrónicos
-        while (formData.get(`correosElectronicos[${i}].correo`)) {
-            correosElectronicos.push({ correo: formData.get(`correosElectronicos[${i}].correo`) });
-            i++;
-        }
-
-        // Transform formData to match the required structure
-        const newUser = {
-            nombre: formData.get('nombre'),
-            apellido: formData.get('apellido'),
-            identidad: formData.get('identidad'),
-            fechaNacimiento: formData.get('fechaNacimiento'),
-            genero: formData.get('genero'),
-            estadoCivil: formData.get('estadoCivil'),
-            direccion: formData.get('direccion'),
-            telefonos: telefonos,
-            correosElectronicos: correosElectronicos,
-            empleado: {
-                codDepartamento: Number(formData.get('empleado.codDepartamento')),
-                codCargo: Number(formData.get('empleado.codCargo')),
-                fechaContrato: formData.get('empleado.fechaContrato')
+const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
+    const { data: session } = useSession();
+    const router = useRouter();
+    console.log("ESTE ES EL USUARIOOOOOasdasdas", usuario);
+    const form = useForm<z.infer<typeof userSchema>>({
+        resolver: zodResolver(userSchema),
+        defaultValues: usuario || {
+            Nombre: "",
+            Apellido: "",
+            Identidad: "",
+            Fecha_Nacimiento: "",
+            Genero: "",
+            Estado_Civil: "",
+            Direccion: "",
+            Telefonos: [{ Telefono: "" }],
+            CorreoElectronico: [{ Correo: "" }],
+            Empleados: {
+                Cod_Departamento: 0,
+                Cod_Cargo: 0,
+                Fecha_Contrato: "",
             },
-            usuario: {
-                contrasena: formData.get('usuario.contrasena'),
-                codRol: Number(formData.get('usuario.codRol')), // Convert to number
-                codEstadoUsuario: Number(formData.get('usuario.codEstadoUsuario')), // Convert to number
-                intentosFallidos: 0,
-                creadoPor: 'admin',
-                modificadoPor: 'admin'
+            Usuarios: {
+                Contrasena: "",
+                Cod_Rol: 0,
+                Cod_EstadoUsuario: 0,
+                Intentos_Fallidos: 0,
+                Creado_Por: 'admin',
+                Modificado_Por: 'admin'
+            },
+        },
+    });
+
+    const { fields: telefonosFields, append: appendTelefono } = useFieldArray({
+        control: form.control,
+        name: "Telefonos"
+    });
+
+    const { fields: correosFields, append: appendCorreo } = useFieldArray({
+        control: form.control,
+        name: "CorreoElectronico"
+    });
+
+    const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+    const [cargos, setCargos] = useState<Cargo[]>([]);
+    const [roles, setRoles] = useState<Rol[]>([]);
+
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const [departamentosRes, cargosRes, rolesRes] = await Promise.all([
+                    fetch(`${Backend_URL}/usuarios/departamentos`, {
+                        headers: { 'Authorization': `Bearer ${session?.backendTokens.accessToken}` },
+                    }),
+                    fetch(`${Backend_URL}/usuarios/cargos`, {
+                        headers: { 'Authorization': `Bearer ${session?.backendTokens.accessToken}` },
+                    }),
+                    fetch(`${Backend_URL}/usuarios/roles`, {
+                        headers: { 'Authorization': `Bearer ${session?.backendTokens.accessToken}` },
+                    }),
+                ]);
+
+                if (departamentosRes.ok) setDepartamentos(await departamentosRes.json());
+                if (cargosRes.ok) setCargos(await cargosRes.json());
+                if (rolesRes.ok) setRoles(await rolesRes.json());
+            } catch (error) {
+                console.error('Error fetching options:', error);
+                toast.error('Error al cargar las opciones de select');
             }
         };
 
-        const fechaNacimientoRaw = formData.get('fechaNacimiento');
+        fetchOptions();
+    }, [session?.backendTokens.accessToken])
+
+    const onSubmit = async (values: z.infer<typeof userSchema>) => {
+        const fechaNacimientoRaw = values.Fecha_Nacimiento;
         if (fechaNacimientoRaw) {
-            // Convertir fechaNacimiento a formato ISO-8601
-            const fechaNacimientoISO = new Date(String(fechaNacimientoRaw)).toISOString();
-            // Actualizar newUser con la fecha en formato ISO-8601
-            newUser.fechaNacimiento = fechaNacimientoISO;
+            values.Fecha_Nacimiento = new Date(fechaNacimientoRaw).toISOString();
         }
 
-        const fechaContratoRaw = formData.get('empleado.fechaContrato');
+        const fechaContratoRaw = values.Empleados.Fecha_Contrato;
         if (fechaContratoRaw) {
-            // Convertir fechaContrato a formato ISO-8601
-            const fechaContratoISO = new Date(String(fechaContratoRaw)).toISOString();
-            // Actualizar newUser con la fecha en formato ISO-8601
-            newUser.empleado.fechaContrato = fechaContratoISO;
+            values.Empleados.Fecha_Contrato = new Date(fechaContratoRaw).toISOString();
         }
-
-        console.log(newUser);
-        console.log('TOKEEEEEN', session?.backendTokens.accessToken);
 
         try {
             const response = await fetch(`${Backend_URL}/usuarios/registrar-usuario`, {
@@ -84,103 +194,278 @@ const FormUsuario = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session?.backendTokens.accessToken}`,
                 },
-                body: JSON.stringify(newUser),
+                body: JSON.stringify(values),
             });
 
-            if (!response.ok) { 
-                const errorResponse = await response.json(); 
+            if (!response.ok) {
+                const errorResponse = await response.json();
                 toast.error(`Error: ${errorResponse.message}`);
             } else {
-                toast.success('Usuario registrado con exito!')
+                toast.success('Usuario registrado con éxito!');
+                router.push("/");
             }
         } catch (error) {
             toast.error('Error al registrar el usuario');
-        } finally {
-            setLoading(false);
         }
     };
 
     return (
         <div className="flex justify-center">
-            <form onSubmit={handleAddUser} className="grid grid-cols-2 gap-4 w-full max-w-lg">
-                <div>
-                    <label htmlFor="nombre" className="block">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="apellido" className="block">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" placeholder="Apellido" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="identidad" className="block">Identidad</label>
-                    <input type="text" id="identidad" name="identidad" placeholder="Identidad" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="fechaNacimiento" className="block">Fecha de Nacimiento</label>
-                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" placeholder="Fecha de Nacimiento" className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="genero" className="block">Género</label>
-                    <select id="genero" name="genero" required className="w-full">
-                        <option value="" disabled selected>Seleccione Género</option>
-                        <option value="femenino">Femenino</option>
-                        <option value="masculino">Masculino</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="estadoCivil" className="block">Estado Civil</label>
-                    <select id="estadoCivil" name="estadoCivil" required className="w-full" >
-                        <option value="" disabled selected>Seleccione Estado Civil</option>
-                        <option value="soltero">Soltero</option>
-                        <option value="casado">Casado</option>
-                        <option value="divorciado">Divorciado</option>
-                        <option value="viudo">Viudo</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="direccion" className="block">Dirección</label>
-                    <textarea id="direccion" name="direccion" placeholder="Dirección" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="telefono" className="block">Teléfono</label>
-                    <input type="text" id="telefono" name="telefonos[0].telefono" placeholder="Teléfono" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="correo" className="block">Correo Electrónico</label>
-                    <input type="email" id="correo" name="correosElectronicos[0].correo" placeholder="Correo Electrónico" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="codDepartamento" className="block">Código de Departamento</label>
-                    <input type="number" id="codDepartamento" name="empleado.codDepartamento" placeholder="Código de Departamento" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="codCargo" className="block">Código de Cargo</label>
-                    <input type="number" id="codCargo" name="empleado.codCargo" placeholder="Código de Cargo" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="fechaContrato" className="block">Fecha de Contrato</label>
-                    <input type="date" id="fechaContrato" name="empleado.fechaContrato" placeholder="Fecha de Contrato" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="contrasena" className="block">Contraseña</label>
-                    <input type="password" id="contrasena" name="usuario.contrasena" placeholder="Contraseña" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="codRol" className="block">Código de Rol</label>
-                    <input type="number" id="codRol" name="usuario.codRol" placeholder="Código de Rol" required className="w-full" />
-                </div>
-                <div>
-                    <label htmlFor="codEstadoUsuario" className="block">Código de Estado de Usuario</label>
-                    <input type="number" id="codEstadoUsuario" name="usuario.codEstadoUsuario" placeholder="Código de Estado de Usuario" required className="w-full" />
-                </div>
-                <div className="col-span-2 flex justify-center mt-4">
-                    <Button type="submit" disabled={loading}>
-                        {loading ? 'Procesando...' : 'Agregar'}
-                    </Button>
-                </div>
-            </form>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4 w-full max-w-lg">
+                    <FormField
+                        control={form.control}
+                        name="Nombre"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nombre</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Nombre" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Apellido"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Apellido</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Apellido" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Identidad"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Identidad</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Identidad" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Fecha_Nacimiento"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Fecha de Nacimiento</FormLabel>
+                                <FormControl>
+                                    <Input type="date" placeholder="Fecha de Nacimiento" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Genero"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Género</FormLabel>
+                                <FormControl>
+                                    <select {...field} className="w-full">
+                                        <option value="" disabled selected>Seleccione Género</option>
+                                        <option value="femenino">Femenino</option>
+                                        <option value="masculino">Masculino</option>
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Estado_Civil"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Estado Civil</FormLabel>
+                                <FormControl>
+                                    <select {...field} className="w-full">
+                                        <option value="" disabled selected>Seleccione Estado Civil</option>
+                                        <option value="soltero">Soltero</option>
+                                        <option value="casado">Casado</option>
+                                        <option value="divorciado">Divorciado</option>
+                                        <option value="viudo">Viudo</option>
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Direccion"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Dirección</FormLabel>
+                                <FormControl>
+                                    <textarea placeholder="Dirección" {...field} className="w-full" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    {telefonosFields.map((item, index) => (
+                        <FormField
+                            key={item.id}
+                            control={form.control}
+                            name={`Telefonos.${index}.Telefono`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Teléfono</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Teléfono" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    ))}
+                    {correosFields.map((item, index) => (
+                        <FormField
+                            key={item.id}
+                            control={form.control}
+                            name={`CorreoElectronico.${index}.Correo`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Correo Electrónico</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Correo Electrónico" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    ))}
+                    <FormField
+                        control={form.control}
+                        name="Empleados.Cod_Departamento"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Departamento</FormLabel>
+                                <FormControl>
+                                    <select
+                                        {...field}
+                                        onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                        value={field.value}
+                                        className="w-full"
+                                    >
+                                        <option value="" >Seleccione Departamento</option>
+                                        {departamentos.map((dep) => (
+                                            <option key={dep.Cod_Departamento} value={dep.Cod_Departamento}>{dep.Departamento}</option>
+                                        ))}
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Empleados.Cod_Cargo"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Cargo</FormLabel>
+                                <FormControl>
+                                    <select
+                                        {...field}
+                                        className="w-full"
+                                        onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                        value={field.value}
+                                    >
+                                        <option value="" >Seleccione Cargo</option>
+                                        {cargos.map((cargo) => (
+                                            <option key={cargo.Cod_Cargo} value={cargo.Cod_Cargo}>{cargo.Cargo}</option>
+                                        ))}
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Empleados.Fecha_Contrato"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Fecha de Contrato</FormLabel>
+                                <FormControl>
+                                    <Input type="date" placeholder="Fecha de Contrato" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Usuarios.Contrasena"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Contraseña</FormLabel>
+                                <FormControl>
+                                    <Input type="password" placeholder="Contraseña" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Usuarios.Cod_Rol"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Rol</FormLabel>
+                                <FormControl>
+                                    <select {...field} className="w-full"
+                                        onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                        value={field.value}
+                                    >
+                                        <option value="" >Seleccione Rol</option>
+                                        {roles.map((rol) => (
+                                            <option key={rol.Cod_Rol} value={rol.Cod_Rol}>{rol.Rol}</option>
+                                        ))}
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Usuarios.Cod_EstadoUsuario"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Código de Estado de Usuario</FormLabel>
+                                <FormControl>
+                                    <select {...field} className='w-full'
+                                        onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                        value={field.value}
+                                    >
+                                        <option value=""  >Estado de Usuario</option>
+                                        <option value="1">Activo</option>
+                                        <option value="2">Inactivo</option>
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="col-span-2 flex justify-end">
+                        <Button type="submit">Registrar Usuario</Button>
+                    </div>
+                </form>
+            </Form>
         </div>
     );
-}
+};
 
 export default FormUsuario;

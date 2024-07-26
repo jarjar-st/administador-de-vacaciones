@@ -6,16 +6,36 @@ import {
   Post,
   Body,
   BadRequestException,
-  Query
+  Query,
+  Put
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { CreateUsuarioDto } from './dto/user.dto';
 import { Roles } from 'src/auth/roles.decorator';
+import { UpdateUsuarioDto } from './dto/update-user.dto';
 
 @Controller('usuarios')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get('roles')
+  // @Roles('admin')
+  async allRoles() {
+    return this.userService.allRoles();
+  }
+
+  @Get('departamentos')
+  // @Roles('admin')
+  async allDepartamentos() {
+    return this.userService.allDepartamentos();
+  }
+
+  @Get('cargos')
+  // @Roles('admin')
+  async allCargos() {
+    return this.userService.allCargos();
+  }
   @UseGuards(JwtGuard)
   @Roles('admin')
   @Get(':id')
@@ -30,7 +50,7 @@ export class UserController {
   }
   @Get()
   @Roles('admin')
-  findAll() {
+  async findAll() {
     return this.userService.findAll();
   }
   @Roles('admin', 'user')
@@ -40,5 +60,13 @@ export class UserController {
       throw new BadRequestException('Email is required');
     }
     return this.userService.findByEmail(email);
+  }
+
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() updateUsuarioDto: UpdateUsuarioDto
+  ) {
+    return await this.userService.update(id, updateUsuarioDto);
   }
 }

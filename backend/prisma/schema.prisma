@@ -33,14 +33,14 @@ model Personas {
 model Telefonos {
   Cod_Telefono Int       @id @default(autoincrement())
   Telefono     Int
-  Cod_Persona  Int
+  Cod_Persona  Int       @unique
   Persona      Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
 }
 
 model Correo_Electronico {
   Cod_Correo  Int       @id @default(autoincrement())
   Correo      String    @db.VarChar(45) @unique
-  Cod_Persona Int
+  Cod_Persona Int       @unique
   Persona     Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
 }
 
@@ -58,7 +58,7 @@ model Cargo {
 
 model Empleados {
   Cod_Empleado     Int           @id @default(autoincrement())
-  Cod_Persona      Int
+  Cod_Persona      Int           @unique
   Cod_Departamento Int
   Cod_Cargo        Int
   Fecha_Contrato   DateTime
@@ -109,7 +109,7 @@ model Objects {
 
 model Usuarios {
   Cod_Usuario       Int            @id @default(autoincrement())
-  Cod_Persona       Int
+  Cod_Persona       Int            @unique
   Cod_EstadoUsuario Int
   Contrasena        String         @map("Contraseña")
   Cod_Rol           Int

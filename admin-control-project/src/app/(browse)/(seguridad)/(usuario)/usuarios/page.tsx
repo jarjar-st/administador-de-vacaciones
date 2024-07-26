@@ -23,23 +23,6 @@ export default async function UsuariosPage() {
   return (
     <Auth roles={['admin']}>
       <div className="container mx-auto mt-4">
-        <div className="flex justify-end">
-
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant={"default"}>Agregar</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Datos de Usuario</DialogTitle>
-                <DialogDescription>
-                  <FormUsuario />
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        </div>
-
         <TablaUsuarios />
       </div>
     </Auth>

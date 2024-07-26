@@ -35,8 +35,8 @@ export class JwtGuard implements CanActivate {
       if (roles && roles.length > 0) {
         console.log('Si entra');
         console.log('roles:', roles);
-        if (!roles.includes(payload.roles)) {
-          console.log('algo', payload.roles);
+        if (!roles.includes(payload.sub.roles)) {
+          console.log('algo', payload.sub.roles);
           throw new ForbiddenException(
             'No tienes permiso para acceder a este recurso'
           );
