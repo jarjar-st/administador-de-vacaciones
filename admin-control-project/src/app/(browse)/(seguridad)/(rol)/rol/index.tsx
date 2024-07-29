@@ -15,7 +15,7 @@ async function getData(): Promise<Usuarios[]> {
       return data;
     } catch (error) {
       console.error("Error fetching data:", error);
-      return []; // Retorna un arreglo vacío o maneja el error como prefieras
+      return []; 
     }
   }
   

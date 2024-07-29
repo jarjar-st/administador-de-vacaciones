@@ -46,13 +46,13 @@ model Correo_Electronico {
 
 model Departamento {
   Cod_Departamento Int         @id @default(autoincrement())
-  Departamento     String      @db.VarChar(45)
+  Departamento     String      @db.VarChar(45) @unique
   Empleados        Empleados[]
 }
 
 model Cargo {
   Cod_Cargo  Int         @id @default(autoincrement())
-  Cargo      String      @db.VarChar(45)
+  Cargo      String      @db.VarChar(45) @unique
   Empleados  Empleados[]
 }
 
@@ -75,7 +75,7 @@ model Estado_Usuario {
 
 model Roles {
   Cod_Rol           Int        @id @default(autoincrement())
-  Rol               String     @db.VarChar(45)
+  Rol               String     @db.VarChar(45) @unique
   Descripcion       String     @db.VarChar(45)
   Fecha_Creacion    DateTime   @map("Fecha_Creacion")
   Creado_Por        String     @db.VarChar(45)

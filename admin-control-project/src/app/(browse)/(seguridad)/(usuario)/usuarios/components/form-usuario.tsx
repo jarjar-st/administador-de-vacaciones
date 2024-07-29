@@ -71,7 +71,8 @@ const userSchema = z.object({
 });
 
 interface FormularioUsuarioProps {
-    usuario?:{
+    usuario?: {
+        Cod_Persona: number;
         Nombre: string;
         Apellido: string;
         Identidad: string;
@@ -80,30 +81,30 @@ interface FormularioUsuarioProps {
         Estado_Civil: string;
         Direccion: string;
         Telefonos: [{
-          Telefono: string;
+            Telefono: string;
         }];
         CorreoElectronico: [{
-          Correo: string;
+            Correo: string;
         }];
         Empleados: {
-          Cod_Departamento: number;
-          Cod_Cargo: number;
-          Fecha_Contrato: string;
+            Cod_Departamento: number;
+            Cod_Cargo: number;
+            Fecha_Contrato: string;
         };
         Usuarios: {
-          Contrasena: string;
-          Cod_Rol: number;
-          Cod_EstadoUsuario: number;
-          Intentos_Fallidos: number;
-          Creado_Por: string;
-          Modificado_Por: string;
-      
+            Contrasena: string;
+            Cod_Rol: number;
+            Cod_EstadoUsuario: number;
+            Intentos_Fallidos: number;
+            Creado_Por: string;
+            Modificado_Por: string;
+
         }
     };
     onSuccess?: () => void;
 }
 
-const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
+const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     const { data: session } = useSession();
     const router = useRouter();
     console.log("ESTE ES EL USUARIOOOOOasdasdas", usuario);
@@ -134,6 +135,19 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
             },
         },
     });
+
+    useEffect(() => {
+        if (usuario) {
+            form.reset({
+                ...usuario,
+                Fecha_Nacimiento: usuario.Fecha_Nacimiento ? usuario.Fecha_Nacimiento.split('T')[0] : "",
+                Empleados: {
+                    ...usuario.Empleados,
+                    Fecha_Contrato: usuario.Empleados.Fecha_Contrato ? usuario.Empleados.Fecha_Contrato.split('T')[0] : usuario.Empleados[0].Fecha_Contrato.split('T')[0],
+                }
+            });
+        }
+    }, [usuario, form]);
 
     const { fields: telefonosFields, append: appendTelefono } = useFieldArray({
         control: form.control,
@@ -188,8 +202,10 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
         }
 
         try {
-            const response = await fetch(`${Backend_URL}/usuarios/registrar-usuario`, {
-                method: 'POST',
+            const url = usuario ? `${Backend_URL}/usuarios/actualizar-usuario/${usuario.Cod_Persona}` : `${Backend_URL}/usuarios/registrar-usuario`;
+            const method = usuario ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session?.backendTokens.accessToken}`,
@@ -220,7 +236,7 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
                             <FormItem>
                                 <FormLabel>Nombre</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Nombre" {...field} />
+                                    <Input  placeholder="Nombre" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -359,7 +375,7 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
                                         value={field.value}
                                         className="w-full"
                                     >
-                                        <option value="" >Seleccione Departamento</option>
+                                        {/* <option value="" disabled >Seleccione Departamento</option> */}
                                         {departamentos.map((dep) => (
                                             <option key={dep.Cod_Departamento} value={dep.Cod_Departamento}>{dep.Departamento}</option>
                                         ))}
@@ -382,7 +398,7 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
                                         onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                         value={field.value}
                                     >
-                                        <option value="" >Seleccione Cargo</option>
+                                        {/* <option value="" disabled >Seleccione Cargo</option> */}
                                         {cargos.map((cargo) => (
                                             <option key={cargo.Cod_Cargo} value={cargo.Cod_Cargo}>{cargo.Cargo}</option>
                                         ))}
@@ -429,7 +445,7 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
                                         onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                         value={field.value}
                                     >
-                                        <option value="" >Seleccione Rol</option>
+                                        {/* <option value="" disabled>Seleccione Rol</option> */}
                                         {roles.map((rol) => (
                                             <option key={rol.Cod_Rol} value={rol.Cod_Rol}>{rol.Rol}</option>
                                         ))}
@@ -450,8 +466,8 @@ const FormUsuario = ({usuario, onSuccess} : FormularioUsuarioProps) => {
                                         onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                         value={field.value}
                                     >
-                                        <option value=""  >Estado de Usuario</option>
-                                        <option value="1">Activo</option>
+                                        {/* <option value="" disabled >Estado de Usuario</option> */}
+                                        <option value="1" selected>Activo</option>
                                         <option value="2">Inactivo</option>
                                     </select>
                                 </FormControl>
