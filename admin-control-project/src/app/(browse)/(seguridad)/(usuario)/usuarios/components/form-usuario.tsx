@@ -49,18 +49,14 @@ const userSchema = z.object({
     Genero: z.string().min(1, "Género es requerido"),
     Estado_Civil: z.string().min(1, "Estado civil es requerido"),
     Direccion: z.string().min(1, "Dirección es requerida"),
-    Telefonos: z.array(z.object({
-        Telefono: z.string().min(1, "Teléfono es requerido"),
-    })),
-    CorreoElectronico: z.array(z.object({
-        Correo: z.string().email("Correo electrónico inválido"),
-    })),
-    Empleados: z.object({
+    Telefono: z.string().min(1, "Teléfono es requerido"),
+    Empleado: z.object({
         Cod_Departamento: z.number().min(1, "Código de Departamento es requerido"),
         Cod_Cargo: z.number().min(1, "Código de Cargo es requerido"),
         Fecha_Contrato: z.string().optional(),
     }),
-    Usuarios: z.object({
+    Usuario: z.object({
+        CorreoElectronico: z.string().email("Correo electrónico inválido"),
         Contrasena: z.string().min(1, "Contraseña es requerida"),
         Cod_Rol: z.number().min(1, "Código de Rol es requerido"),
         Cod_EstadoUsuario: z.number().min(1, "Código de Estado de Usuario es requerido"),
@@ -80,27 +76,23 @@ interface FormularioUsuarioProps {
         Genero: string;
         Estado_Civil: string;
         Direccion: string;
-        Telefonos: [{
-            Telefono: string;
-        }];
-        CorreoElectronico: [{
-            Correo: string;
-        }];
-        Empleados: {
+        Telefono: string;
+        Empleado: {
             Cod_Departamento: number;
             Cod_Cargo: number;
             Fecha_Contrato: string;
         };
-        Usuarios: {
+        Usuario: {
+            CorreoElectronico: string;
             Contrasena: string;
             Cod_Rol: number;
             Cod_EstadoUsuario: number;
-            Intentos_Fallidos: number;
-            Creado_Por: string;
-            Modificado_Por: string;
-
+            // Intentos_Fallidos: number;
+            // Creado_Por: string;
+            // Modificado_Por: string;
         }
-    };
+
+    }
     onSuccess?: () => void;
 }
 
@@ -110,7 +102,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     console.log("ESTE ES EL USUARIOOOOOasdasdas", usuario);
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
-        defaultValues: usuario || {
+        defaultValues: usuario ?? {
             Nombre: "",
             Apellido: "",
             Identidad: "",
@@ -118,46 +110,60 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
             Genero: "",
             Estado_Civil: "",
             Direccion: "",
-            Telefonos: [{ Telefono: "" }],
-            CorreoElectronico: [{ Correo: "" }],
-            Empleados: {
+            Telefono: "",
+            Empleado: {
                 Cod_Departamento: 0,
                 Cod_Cargo: 0,
                 Fecha_Contrato: "",
             },
-            Usuarios: {
+            Usuario: {
+                CorreoElectronico: "",
                 Contrasena: "",
                 Cod_Rol: 0,
                 Cod_EstadoUsuario: 0,
-                Intentos_Fallidos: 0,
-                Creado_Por: 'admin',
-                Modificado_Por: 'admin'
+
             },
         },
     });
 
-    useEffect(() => {
-        if (usuario) {
-            form.reset({
-                ...usuario,
-                Fecha_Nacimiento: usuario.Fecha_Nacimiento ? usuario.Fecha_Nacimiento.split('T')[0] : "",
-                Empleados: {
-                    ...usuario.Empleados,
-                    Fecha_Contrato: usuario.Empleados.Fecha_Contrato ? usuario.Empleados.Fecha_Contrato.split('T')[0] : usuario.Empleados[0].Fecha_Contrato.split('T')[0],
-                }
-            });
-        }
-    }, [usuario, form]);
+    // useEffect(() => {
+    //     if (usuario) {
+    //         form.reset({
+    //             ...usuario,
+    //             Nombre: usuario.Nombre,
+    //             Apellido: usuario.Apellido,
+    //             Identidad: usuario.Identidad,
+    //             Telefonos: [
+    //                 ...usuario.Telefonos.map((telefono) => ({ Telefono: telefono.Telefono.toString() })),
 
-    const { fields: telefonosFields, append: appendTelefono } = useFieldArray({
-        control: form.control,
-        name: "Telefonos"
-    });
+    //             ],
+    //             Fecha_Nacimiento: usuario.Fecha_Nacimiento ? usuario.Fecha_Nacimiento.split('T')[0] : "",
+    //             Empleados: {
+    //                 ...usuario.Empleados,
+    //                 Fecha_Contrato: usuario.Empleados.Fecha_Contrato ? usuario.Empleados.Fecha_Contrato.split('T')[0] : usuario.Empleados[0].Fecha_Contrato.split('T')[0],
+    //                 Cod_Departamento: usuario.Empleados[0].Cod_Departamento,
+    //                 Cod_Cargo: usuario.Empleados[0].Cod_Cargo,
+    //             },
+    //             Usuarios: {
+    //                 ...usuario.Usuarios,
+    //                 Contrasena: usuario.Usuarios[0].Contrasena,
+    //                 Cod_Rol: usuario.Usuarios[0].Cod_Rol,
+    //                 Cod_EstadoUsuario: usuario.Usuarios[0].Cod_EstadoUsuario,
 
-    const { fields: correosFields, append: appendCorreo } = useFieldArray({
-        control: form.control,
-        name: "CorreoElectronico"
-    });
+    //             }
+    //         });
+    //     }
+    // }, [usuario, form]);
+
+    // const { fields: telefonosFields, append: appendTelefono } = useFieldArray({
+    //     control: form.control,
+    //     name: "Telefonos"
+    // });
+
+    // const { fields: correosFields, append: appendCorreo } = useFieldArray({
+    //     control: form.control,
+    //     name: "CorreoElectronico"
+    // });
 
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [cargos, setCargos] = useState<Cargo[]>([]);
@@ -195,14 +201,19 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
         if (fechaNacimientoRaw) {
             values.Fecha_Nacimiento = new Date(fechaNacimientoRaw).toISOString();
         }
-
-        const fechaContratoRaw = values.Empleados.Fecha_Contrato;
+    
+        const fechaContratoRaw = values.Empleado.Fecha_Contrato;
         if (fechaContratoRaw) {
-            values.Empleados.Fecha_Contrato = new Date(fechaContratoRaw).toISOString();
+            values.Empleado.Fecha_Contrato = new Date(fechaContratoRaw).toISOString();
         }
-
+    
+        // Agregar Fecha_Creacion y Fecha_Modificacion
+        const currentDateISO = new Date().toISOString();
+        values.Usuario.Fecha_Creacion = currentDateISO;
+        values.Usuario.Fecha_Modificacion = currentDateISO;
+    
         try {
-            const url = usuario ? `${Backend_URL}/usuarios/actualizar-usuario/${usuario.Cod_Persona}` : `${Backend_URL}/usuarios/registrar-usuario`;
+            const url = usuario ? `${Backend_URL}/usuarios/${usuario.Cod_Persona}` : `${Backend_URL}/usuarios/registrar-usuario`;
             const method = usuario ? 'PUT' : 'POST';
             const response = await fetch(url, {
                 method,
@@ -212,9 +223,10 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                 },
                 body: JSON.stringify(values),
             });
-
+    
             if (!response.ok) {
                 const errorResponse = await response.json();
+                console.error('Error registrando usuario:', errorResponse);
                 toast.error(`Error: ${errorResponse.message}`);
             } else {
                 toast.success('Usuario registrado con éxito!');
@@ -224,7 +236,6 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
             toast.error('Error al registrar el usuario');
         }
     };
-
     return (
         <div className="flex justify-center">
             <Form {...form}>
@@ -236,7 +247,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             <FormItem>
                                 <FormLabel>Nombre</FormLabel>
                                 <FormControl>
-                                    <Input  placeholder="Nombre" {...field} />
+                                    <Input placeholder="Nombre" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -330,11 +341,10 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             </FormItem>
                         )}
                     />
-                    {telefonosFields.map((item, index) => (
+                    
                         <FormField
-                            key={item.id}
                             control={form.control}
-                            name={`Telefonos.${index}.Telefono`}
+                            name="Telefono"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Teléfono</FormLabel>
@@ -345,12 +355,9 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                                 </FormItem>
                             )}
                         />
-                    ))}
-                    {correosFields.map((item, index) => (
                         <FormField
-                            key={item.id}
                             control={form.control}
-                            name={`CorreoElectronico.${index}.Correo`}
+                            name="Usuario.CorreoElectronico"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Correo Electrónico</FormLabel>
@@ -361,10 +368,9 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                                 </FormItem>
                             )}
                         />
-                    ))}
                     <FormField
                         control={form.control}
-                        name="Empleados.Cod_Departamento"
+                        name="Empleado.Cod_Departamento"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Departamento</FormLabel>
@@ -387,7 +393,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Empleados.Cod_Cargo"
+                        name="Empleado.Cod_Cargo"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Cargo</FormLabel>
@@ -410,7 +416,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Empleados.Fecha_Contrato"
+                        name="Empleado.Fecha_Contrato"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fecha de Contrato</FormLabel>
@@ -423,7 +429,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuarios.Contrasena"
+                        name="Usuario.Contrasena"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Contraseña</FormLabel>
@@ -436,7 +442,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuarios.Cod_Rol"
+                        name="Usuario.Cod_Rol"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Rol</FormLabel>
@@ -457,7 +463,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuarios.Cod_EstadoUsuario"
+                        name="Usuario.Cod_EstadoUsuario"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Código de Estado de Usuario</FormLabel>

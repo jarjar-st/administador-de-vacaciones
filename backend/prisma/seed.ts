@@ -61,34 +61,26 @@ async function main() {
       Genero: 'Masculino',
       Estado_Civil: 'Soltero',
       Direccion: 'Calle Falsa 123',
-      Telefonos: {
-        create: [{ Telefono: 123456789 }]
+      Telefono: '123456789',
+      Usuario: {
+        create: {
+          CorreoElectronico: 'juan.perez@example.com',
+          Contrasena: hashedPassword,
+          Cod_EstadoUsuario: 1,
+          Cod_Rol: 1,
+          Intentos_Fallidos: '0',
+          Fecha_Creacion: new Date(),
+          Creado_Por: 'admin',
+          Fecha_Modificacion: new Date(),
+          Modificado_Por: 'admin'
+        }
       },
-      CorreoElectronico: {
-        create: [{ Correo: 'juan.perez@example.com' }]
-      },
-      Usuarios: {
-        create: [
-          {
-            Contrasena: hashedPassword,
-            Cod_EstadoUsuario: 1,
-            Cod_Rol: 1,
-            Intentos_Fallidos: '0',
-            Fecha_Creacion: new Date(),
-            Creado_Por: 'admin',
-            Fecha_Modificacion: new Date(),
-            Modificado_Por: 'admin'
-          }
-        ]
-      },
-      Empleados: {
-        create: [
-          {
-            Cod_Departamento: 1,
-            Cod_Cargo: 1,
-            Fecha_Contrato: new Date()
-          }
-        ]
+      Empleado: {
+        create: {
+          Cod_Departamento: 1,
+          Cod_Cargo: 1,
+          Fecha_Contrato: new Date()
+        }
       }
     }
   });

@@ -30,25 +30,17 @@ export type Usuarios = {
   Genero: string;
   Estado_Civil: string;
   Direccion: string;
-  Telefonos: [{
-    Telefono: string;
-  }];
-  CorreoElectronico: [{
-    Correo: string;
-  }];
-  Empleados: {
+  Telefonos: string;
+  Empleado: {
     Cod_Departamento: number;
     Cod_Cargo: number;
     Fecha_Contrato: string;
   };
-  Usuarios: {
+  Usuario: {
+    CorreoElectronico: string;
     Contrasena: string;
     Cod_Rol: number;
     Cod_EstadoUsuario: number;
-    Intentos_Fallidos: number;
-    Creado_Por: string;
-    Modificado_Por: string;
-
   }
 
 }
@@ -123,7 +115,7 @@ export const columns: ColumnDef<Usuarios>[] = [
       // Accede a la propiedad "Usuarios" del objeto "row.original" (que representa la fila actual)
       // y mapea cada usuario a una cadena que contiene el "Cod_Usuario" y "Cod_Rol",
       // luego une estas cadenas con comas para mostrarlas en la celda.
-      return row.original.Usuarios.map(usuario => ` Cod_Rol: ${usuario.Cod_Rol}`).join(', ');
+      return row.original.Usuario.Cod_Rol
     },
   },
   {

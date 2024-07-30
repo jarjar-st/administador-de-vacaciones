@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,58 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Personas {
-  Cod_Persona       Int                  @id @default(autoincrement())
-  Nombre            String               @db.VarChar(25)
-  Apellido          String               @db.VarChar(25)
-  Identidad         String               @db.VarChar(15)
-  Fecha_Nacimiento  DateTime?
-  Edad              Int?
-  Genero            String               @db.VarChar(25)
-  Estado_Civil      String               @db.VarChar(25)
-  Direccion         String               @db.VarChar(100)
-  Telefonos         Telefonos[]
-  CorreoElectronico Correo_Electronico[]
-  Usuarios          Usuarios[]
-  Empleados         Empleados[]
-}
-
-model Telefonos {
-  Cod_Telefono Int       @id @default(autoincrement())
-  Telefono     Int
-  Cod_Persona  Int       @unique
-  Persona      Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
-}
-
-model Correo_Electronico {
-  Cod_Correo  Int       @id @default(autoincrement())
-  Correo      String    @db.VarChar(45) @unique
-  Cod_Persona Int       @unique
-  Persona     Personas  @relation(fields: [Cod_Persona], references: [Cod_Persona])
+  Cod_Persona      Int        @id @default(autoincrement())
+  Nombre           String     @db.VarChar(25)
+  Apellido         String     @db.VarChar(25)
+  Identidad        String     @db.VarChar(15)
+  Fecha_Nacimiento DateTime?
+  Edad             Int?
+  Genero           String     @db.VarChar(25)
+  Estado_Civil     String     @db.VarChar(25)
+  Direccion        String     @db.VarChar(100)
+  Telefono         String?
+  Usuario          Usuarios?
+  Empleado         Empleados?
 }
 
 model Departamento {
   Cod_Departamento Int         @id @default(autoincrement())
-  Departamento     String      @db.VarChar(45) @unique
+  Departamento     String      @unique @db.VarChar(45)
   Empleados        Empleados[]
 }
 
 model Cargo {
-  Cod_Cargo  Int         @id @default(autoincrement())
-  Cargo      String      @db.VarChar(45) @unique
-  Empleados  Empleados[]
+  Cod_Cargo Int         @id @default(autoincrement())
+  Cargo     String      @unique @db.VarChar(45)
+  Empleados Empleados[]
 }
 
 model Empleados {
-  Cod_Empleado     Int           @id @default(autoincrement())
-  Cod_Persona      Int           @unique
+  Cod_Empleado     Int          @id @default(autoincrement())
+  Cod_Persona      Int          @unique
   Cod_Departamento Int
   Cod_Cargo        Int
   Fecha_Contrato   DateTime
-  Persona          Personas      @relation(fields: [Cod_Persona], references: [Cod_Persona])
-  Departamento     Departamento  @relation(fields: [Cod_Departamento], references: [Cod_Departamento])
-  Cargo            Cargo         @relation(fields: [Cod_Cargo], references: [Cod_Cargo])
+  Persona          Personas     @relation(fields: [Cod_Persona], references: [Cod_Persona])
+  Departamento     Departamento @relation(fields: [Cod_Departamento], references: [Cod_Departamento])
+  Cargo            Cargo        @relation(fields: [Cod_Cargo], references: [Cod_Cargo])
 }
 
 model Estado_Usuario {
@@ -74,51 +52,52 @@ model Estado_Usuario {
 }
 
 model Roles {
-  Cod_Rol           Int        @id @default(autoincrement())
-  Rol               String     @db.VarChar(45) @unique
-  Descripcion       String     @db.VarChar(45)
-  Fecha_Creacion    DateTime   @map("Fecha_Creacion")
-  Creado_Por        String     @db.VarChar(45)
-  Fecha_Modificacion DateTime  @map("Fecha_Modificacion")
-  Modificado_Por    String     @db.VarChar(45)
-  Usuarios          Usuarios[]
-  Accesses          Accesses[]
+  Cod_Rol            Int        @id @default(autoincrement())
+  Rol                String     @unique @db.VarChar(45)
+  Descripcion        String     @db.VarChar(45)
+  Fecha_Creacion     DateTime?   @default(now())
+  Creado_Por         String     @db.VarChar(45)
+  Fecha_Modificacion DateTime?   @updatedAt
+  Modificado_Por     String     @db.VarChar(45)
+  Usuarios           Usuarios[]
+  Accesses           Accesses[]
 }
 
 model Accesses {
-  Cod_Access        Int        @id @default(autoincrement())
-  Cod_Rol           Int
-  Cod_Object        Int
-  Ind_Module        Boolean    @default(false)
-  Ind_Insert        Boolean    @default(false)
-  Ind_Select        Boolean    @default(false)
-  Ind_Update        Boolean    @default(false)
-  Ind_Delete        Boolean    @default(false)
-  Rol               Roles      @relation(fields: [Cod_Rol], references: [Cod_Rol])
-  Object            Objects    @relation(fields: [Cod_Object], references: [Cod_Object])
+  Cod_Access Int     @id @default(autoincrement())
+  Cod_Rol    Int
+  Cod_Object Int
+  Ind_Module Boolean @default(false)
+  Ind_Insert Boolean @default(false)
+  Ind_Select Boolean @default(false)
+  Ind_Update Boolean @default(false)
+  Ind_Delete Boolean @default(false)
+  Rol        Roles   @relation(fields: [Cod_Rol], references: [Cod_Rol])
+  Object     Objects @relation(fields: [Cod_Object], references: [Cod_Object])
 }
 
 model Objects {
-  Cod_Object        Int        @id @default(autoincrement())
-  Nom_Object        String     @db.VarChar(255)
-  Tip_Object        String     @db.VarChar(255)
-  Des_Object        String     @db.VarChar(255)
-  Ind_Object        Boolean    @default(false)
-  Accesses          Accesses[]
+  Cod_Object Int        @id @default(autoincrement())
+  Nom_Object String     @db.VarChar(255)
+  Tip_Object String     @db.VarChar(255)
+  Des_Object String     @db.VarChar(255)
+  Ind_Object Boolean    @default(false)
+  Accesses   Accesses[]
 }
 
 model Usuarios {
-  Cod_Usuario       Int            @id @default(autoincrement())
-  Cod_Persona       Int            @unique
-  Cod_EstadoUsuario Int
-  Contrasena        String         @map("Contraseña")
-  Cod_Rol           Int
-  Intentos_Fallidos String         @db.VarChar(45)
-  Fecha_Creacion    DateTime       @map("Fecha_Creacion")
-  Creado_Por        String         @db.VarChar(45)
-  Fecha_Modificacion DateTime      @map("Fecha_Modificacion")
-  Modificado_Por    String         @db.VarChar(45)
-  Persona           Personas       @relation(fields: [Cod_Persona], references: [Cod_Persona])
-  EstadoUsuario     Estado_Usuario @relation(fields: [Cod_EstadoUsuario], references: [Cod_EstadoUsuario])
-  Rol               Roles          @relation(fields: [Cod_Rol], references: [Cod_Rol])
+  Cod_Usuario        Int            @id @default(autoincrement())
+  Cod_Persona        Int            @unique
+  Cod_EstadoUsuario  Int
+  CorreoElectronico  String?        @unique
+  Contrasena         String         @map("Contraseña")
+  Cod_Rol            Int
+  Intentos_Fallidos  String         @db.VarChar(45)
+  Fecha_Creacion     DateTime?      @default(now())
+  Creado_Por         String         @db.VarChar(45)
+  Fecha_Modificacion DateTime?      @updatedAt
+  Modificado_Por     String         @db.VarChar(45)
+  Persona            Personas       @relation(fields: [Cod_Persona], references: [Cod_Persona])
+  EstadoUsuario      Estado_Usuario @relation(fields: [Cod_EstadoUsuario], references: [Cod_EstadoUsuario])
+  Rol                Roles          @relation(fields: [Cod_Rol], references: [Cod_Rol])
 }

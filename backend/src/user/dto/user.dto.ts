@@ -6,24 +6,16 @@ import {
   IsOptional,
   IsArray,
   ValidateNested,
-  IsNumberString
+  IsNumberString,
+  isString
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-// DTO para los teléfonos
-class TelefonoDto {
-  @IsNumberString()
-  Telefono: string;
-}
-
-// DTO para los correos electrónicos
-class CorreoElectronicoDto {
-  @IsEmail()
-  Correo: string;
-}
-
 // DTO para los datos del usuario
 class UsuarioDto {
+  @IsString()
+  CorreoElectronico: string;
+
   @IsString()
   @IsOptional()
   Contrasena?: string;
@@ -39,7 +31,13 @@ class UsuarioDto {
   Intentos_Fallidos?: number;
 
   @IsString()
+  Fecha_Modificacion: string;
+
+  @IsString()
   Creado_Por: string;
+
+  @IsString()
+  Fecha_Creacion: string;
 
   @IsOptional()
   @IsString()
@@ -82,23 +80,21 @@ export class CreateUsuarioDto {
   @IsString()
   Direccion: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => TelefonoDto)
-  @IsArray()
-  Telefonos: TelefonoDto[];
+  @IsString()
+  Telefono: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => CorreoElectronicoDto)
-  @IsArray()
-  CorreoElectronico: CorreoElectronicoDto[];
+  // Campo adicional Edad
+  @IsInt()
+  @IsOptional()
+  Edad?: number;
 
   // Datos de la Cuenta de Usuario
   @ValidateNested()
   @Type(() => UsuarioDto)
-  Usuarios: UsuarioDto;
+  Usuario: UsuarioDto;
 
   // Datos del Empleado
   @ValidateNested()
   @Type(() => EmpleadoDto)
-  Empleados: EmpleadoDto;
+  Empleado: EmpleadoDto;
 }
