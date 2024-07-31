@@ -12,49 +12,52 @@ import {
 import { Type } from 'class-transformer';
 
 // DTO para los datos del usuario
-class UsuarioDto {
-  @IsString()
-  CorreoElectronico: string;
+// class UsuarioDto {
+//   @IsString()
+//   CorreoElectronico: string;
 
-  @IsString()
-  @IsOptional()
-  Contrasena?: string;
+//   @IsString()
+//   @IsOptional()
+//   Contrasena?: string;
 
-  @IsInt()
-  Cod_Rol: number;
+//   @IsInt()
+//   Cod_Rol: number;
 
-  @IsInt()
-  Cod_EstadoUsuario: number;
+//   @IsInt()
+//   Cod_EstadoUsuario: number;
 
-  @IsInt()
-  @IsOptional()
-  Intentos_Fallidos?: number;
+//   @IsInt()
+//   @IsOptional()
+//   Intentos_Fallidos?: number;
 
-  @IsString()
-  Fecha_Modificacion: string;
+//   @IsString()
+//   @IsOptional()
+//   Fecha_Modificacion: string;
 
-  @IsString()
-  Creado_Por: string;
+//   @IsString()
+//   @IsOptional()
+//   Creado_Por: string;
 
-  @IsString()
-  Fecha_Creacion: string;
+//   @IsString()
+//   @IsOptional()
+//   Fecha_Creacion: string;
 
-  @IsOptional()
-  @IsString()
-  Modificado_Por?: string;
-}
+//   @IsOptional()
+//   @IsString()
+//   Modificado_Por?: string;
+// }
 
 // DTO para los datos del empleado
-class EmpleadoDto {
-  @IsInt()
-  Cod_Departamento: number;
+// class EmpleadoDto {
+//   @IsInt()
+//   Cod_Departamento: number;
 
-  @IsInt()
-  Cod_Cargo: number;
+//   @IsInt()
+//   Cod_Cargo: number;
 
-  @IsString()
-  Fecha_Contrato: string;
-}
+//   @IsString()
+//   Fecha_Contrato: string;
+// }
 
 // DTO principal para la creación de usuarios
 export class CreateUsuarioDto {
@@ -88,13 +91,55 @@ export class CreateUsuarioDto {
   @IsOptional()
   Edad?: number;
 
+  @IsInt()
+  Cod_Departamento: number;
+
+  @IsInt()
+  Cod_Cargo: number;
+
+  @IsString()
+  Fecha_Contrato: string;
+
+  @IsString()
+  CorreoElectronico: string;
+
+  @IsString()
+  @IsOptional()
+  Contrasena?: string;
+
+  @IsInt()
+  Cod_Rol: number;
+
+  @IsInt()
+  Cod_EstadoUsuario: number;
+
+  @IsInt()
+  @IsOptional()
+  Intentos_Fallidos?: number;
+
+  @IsString()
+  @IsOptional()
+  Fecha_Modificacion: string;
+
+  @IsString()
+  @IsOptional()
+  Creado_Por: string;
+
+  @IsString()
+  @IsOptional()
+  Fecha_Creacion: string;
+
+  @IsOptional()
+  @IsString()
+  Modificado_Por?: string;
+
   // Datos de la Cuenta de Usuario
-  @ValidateNested()
-  @Type(() => UsuarioDto)
-  Usuario: UsuarioDto;
+  // @ValidateNested()
+  // @Type(() => UsuarioDto)
+  // Usuario: UsuarioDto;
 
   // Datos del Empleado
-  @ValidateNested()
-  @Type(() => EmpleadoDto)
-  Empleado: EmpleadoDto;
+  // @ValidateNested()
+  // @Type(() => EmpleadoDto)
+  // Empleado: EmpleadoDto;
 }

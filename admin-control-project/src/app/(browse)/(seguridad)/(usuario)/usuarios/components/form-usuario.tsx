@@ -42,56 +42,70 @@ interface Rol {
 }
 
 const userSchema = z.object({
-    Nombre: z.string().min(1, "Nombre es requerido"),
-    Apellido: z.string().min(1, "Apellido es requerido"),
-    Identidad: z.string().min(1, "Identidad es requerida"),
+    Nombre: z.string()
+        .min(1, "Nombre es requerido")
+        .regex(/^[a-zA-Z\s]*$/, "Solo se permiten letras")
+        .max(50, "Máximo 50 caracteres"),
+    Apellido: z.string()
+        .min(1, "Apellido es requerido")
+        .regex(/^[a-zA-Z\s]*$/, "Solo se permiten letras")
+        .max(50, "Máximo 50 caracteres"),
+    Identidad: z.string()
+        .min(1, "Identidad es requerida")
+        .regex(/^[0-9]*$/, "Solo se permiten números")
+        .max(13, "Máximo 13 caracteres"),
     Fecha_Nacimiento: z.string().optional(),
     Genero: z.string().min(1, "Género es requerido"),
     Estado_Civil: z.string().min(1, "Estado civil es requerido"),
-    Direccion: z.string().min(1, "Dirección es requerida"),
-    Telefono: z.string().min(1, "Teléfono es requerido"),
-    Empleado: z.object({
-        Cod_Departamento: z.number().min(1, "Código de Departamento es requerido"),
-        Cod_Cargo: z.number().min(1, "Código de Cargo es requerido"),
-        Fecha_Contrato: z.string().optional(),
-    }),
-    Usuario: z.object({
-        CorreoElectronico: z.string().email("Correo electrónico inválido"),
-        Contrasena: z.string().min(1, "Contraseña es requerida"),
-        Cod_Rol: z.number().min(1, "Código de Rol es requerido"),
-        Cod_EstadoUsuario: z.number().min(1, "Código de Estado de Usuario es requerido"),
-        Intentos_Fallidos: z.number().optional(),
-        Creado_Por: z.string().optional(),
-        Modificado_Por: z.string().optional(),
-    })
+    Direccion: z.string().min(1, "Dirección es requerida").max(100, "Máximo 100 caracteres"),
+    Telefono: z.string()
+        .min(1, "Teléfono es requerido")
+        .regex(/^[0-9]*$/, "Solo se permiten números")
+        .max(8, "Máximo 8 caracteres"),
+    Cod_Departamento: z.number().min(1, "Código de Departamento es requerido"),
+    Cod_Cargo: z.number().min(1, "Código de Cargo es requerido"),
+    Fecha_Contrato: z.string().optional(),
+    CorreoElectronico: z.string().email("Correo electrónico inválido"),
+    Contrasena: z.string().min(1, "Contraseña es requerida"),
+    Cod_Rol: z.number().min(1, "Código de Rol es requerido"),
+    Cod_EstadoUsuario: z.number().min(1, "Código de Estado de Usuario es requerido"),
 });
 
 interface FormularioUsuarioProps {
-    usuario?: {
-        Cod_Persona: number;
-        Nombre: string;
-        Apellido: string;
-        Identidad: string;
-        Fecha_Nacimiento: string;
-        Genero: string;
-        Estado_Civil: string;
-        Direccion: string;
-        Telefono: string;
-        Empleado: {
-            Cod_Departamento: number;
-            Cod_Cargo: number;
-            Fecha_Contrato: string;
-        };
-        Usuario: {
-            CorreoElectronico: string;
-            Contrasena: string;
-            Cod_Rol: number;
-            Cod_EstadoUsuario: number;
-            // Intentos_Fallidos: number;
-            // Creado_Por: string;
-            // Modificado_Por: string;
-        }
-
+    usuario?:
+    {
+        Cod_Persona: number,
+        Nombre: string,
+        Apellido: string,
+        Identidad: string,
+        Fecha_Nacimiento: string,
+        Edad: number,
+        Genero: string,
+        Estado_Civil: string,
+        Direccion: string,
+        Telefono: string,
+        Cod_Empleado: number,
+        Cod_Departamento: number,
+        Cod_Cargo: number,
+        Fecha_Contrato: string,
+        Departamento: string,
+        Cargo: string,
+        Cod_Usuario: number,
+        Cod_EstadoUsuario: number,
+        CorreoElectronico: string,
+        Contrasena: string,
+        Cod_Rol: number,
+        Intentos_Fallidos: string,
+        Fecha_Creacion: string,
+        Creado_Por: string,
+        Fecha_Modificacion: string,
+        Modificado_Por: string,
+        Rol: string,
+        EstadoUsuario: {
+            Cod_EstadoUsuario: number,
+            Descripcion: string
+        },
+        Descripcion: string
     }
     onSuccess?: () => void;
 }
@@ -100,9 +114,15 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     const { data: session } = useSession();
     const router = useRouter();
     console.log("ESTE ES EL USUARIOOOOOasdasdas", usuario);
+    const usuarioDefault = {
+        ...usuario,
+        Fecha_Nacimiento: usuario?.Fecha_Nacimiento.toString().split('T')[0],
+        Fecha_Contrato: usuario?.Fecha_Contrato.toString().split('T')[0]
+
+    }
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
-        defaultValues: usuario ?? {
+        defaultValues: usuarioDefault ?? {
             Nombre: "",
             Apellido: "",
             Identidad: "",
@@ -111,19 +131,14 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
             Estado_Civil: "",
             Direccion: "",
             Telefono: "",
-            Empleado: {
-                Cod_Departamento: 0,
-                Cod_Cargo: 0,
-                Fecha_Contrato: "",
-            },
-            Usuario: {
-                CorreoElectronico: "",
-                Contrasena: "",
-                Cod_Rol: 0,
-                Cod_EstadoUsuario: 0,
-
-            },
-        },
+            Cod_Departamento: 0,
+            Cod_Cargo: 0,
+            Fecha_Contrato: "",
+            Cod_EstadoUsuario: 0,
+            CorreoElectronico: "",
+            Contrasena: "",
+            Cod_Rol: 0,
+        }
     });
 
     // useEffect(() => {
@@ -201,17 +216,17 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
         if (fechaNacimientoRaw) {
             values.Fecha_Nacimiento = new Date(fechaNacimientoRaw).toISOString();
         }
-    
-        const fechaContratoRaw = values.Empleado.Fecha_Contrato;
+
+        const fechaContratoRaw = values.Fecha_Contrato;
         if (fechaContratoRaw) {
-            values.Empleado.Fecha_Contrato = new Date(fechaContratoRaw).toISOString();
+            values.Fecha_Contrato = new Date(fechaContratoRaw).toISOString();
         }
-    
+
         // Agregar Fecha_Creacion y Fecha_Modificacion
         const currentDateISO = new Date().toISOString();
-        values.Usuario.Fecha_Creacion = currentDateISO;
-        values.Usuario.Fecha_Modificacion = currentDateISO;
-    
+        const Fecha_Creacion = currentDateISO;
+        const Fecha_Modificacion = currentDateISO;
+
         try {
             const url = usuario ? `${Backend_URL}/usuarios/${usuario.Cod_Persona}` : `${Backend_URL}/usuarios/registrar-usuario`;
             const method = usuario ? 'PUT' : 'POST';
@@ -223,7 +238,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                 },
                 body: JSON.stringify(values),
             });
-    
+
             if (!response.ok) {
                 const errorResponse = await response.json();
                 console.error('Error registrando usuario:', errorResponse);
@@ -237,7 +252,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
         }
     };
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center h-[450px] overflow-y-auto custom-scrollbar-form">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4 w-full max-w-lg">
                     <FormField
@@ -260,7 +275,12 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             <FormItem>
                                 <FormLabel>Apellido</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Apellido" {...field} />
+                                    <Input placeholder="Apellido" {...field}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            const filteredValue = value.replace(/[^a-zA-Z]/g, '');
+                                            field.onChange(filteredValue);
+                                        }} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -273,7 +293,11 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             <FormItem>
                                 <FormLabel>Identidad</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Identidad" {...field} />
+                                    <Input placeholder="Identidad" {...field} maxLength={13} minLength={13} onChange={(e) => {
+                                        const value = e.target.value;
+                                        const filteredValue = value.replace(/[a-zA-Z]/g, '');
+                                        field.onChange(filteredValue);
+                                    }} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -341,36 +365,41 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             </FormItem>
                         )}
                     />
-                    
-                        <FormField
-                            control={form.control}
-                            name="Telefono"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Teléfono</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Teléfono" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="Usuario.CorreoElectronico"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Correo Electrónico</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Correo Electrónico" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
                     <FormField
                         control={form.control}
-                        name="Empleado.Cod_Departamento"
+                        name="Telefono"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Teléfono</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Teléfono" {...field} maxLength={8} minLength={8}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            const filteredValue = value.replace(/[a-zA-Z]/g, '');
+                                            field.onChange(filteredValue);
+                                        }} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="CorreoElectronico"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Correo Electrónico</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Correo Electrónico" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="Cod_Departamento"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Departamento</FormLabel>
@@ -393,7 +422,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Empleado.Cod_Cargo"
+                        name="Cod_Cargo"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Cargo</FormLabel>
@@ -416,7 +445,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Empleado.Fecha_Contrato"
+                        name="Fecha_Contrato"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fecha de Contrato</FormLabel>
@@ -429,7 +458,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuario.Contrasena"
+                        name="Contrasena"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Contraseña</FormLabel>
@@ -442,7 +471,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuario.Cod_Rol"
+                        name="Cod_Rol"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Rol</FormLabel>
@@ -463,7 +492,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="Usuario.Cod_EstadoUsuario"
+                        name="Cod_EstadoUsuario"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Código de Estado de Usuario</FormLabel>

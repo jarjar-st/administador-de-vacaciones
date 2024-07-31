@@ -21,30 +21,41 @@ import {
 import FormUsuario from "./components/form-usuario"
 
 
-export type Usuarios = {
-  Cod_Persona: number;
-  Nombre: string;
-  Apellido: string;
-  Identidad: string;
-  Fecha_Nacimiento: string;
-  Genero: string;
-  Estado_Civil: string;
-  Direccion: string;
-  Telefonos: string;
-  Empleado: {
-    Cod_Departamento: number;
-    Cod_Cargo: number;
-    Fecha_Contrato: string;
-  };
-  Usuario: {
-    CorreoElectronico: string;
-    Contrasena: string;
-    Cod_Rol: number;
-    Cod_EstadoUsuario: number;
+export type Usuarios =
+  {
+    Cod_Persona: number,
+    Nombre: string,
+    Apellido: string,
+    Identidad: string,
+    Fecha_Nacimiento: string,
+    Edad: number,
+    Genero: string,
+    Estado_Civil: string,
+    Direccion: string,
+    Telefono: string,
+    Cod_Empleado: number,
+    Cod_Departamento: number,
+    Cod_Cargo: number,
+    Fecha_Contrato: string,
+    Departamento: string,
+    Cargo: string,
+    Cod_Usuario: number,
+    Cod_EstadoUsuario: number,
+    CorreoElectronico: string,
+    Contrasena: string,
+    Cod_Rol: number,
+    Intentos_Fallidos: string,
+    Fecha_Creacion: string,
+    Creado_Por: string,
+    Fecha_Modificacion: string,
+    Modificado_Por: string,
+    Rol: string,
+    EstadoUsuario: {
+      Cod_EstadoUsuario: number,
+      Descripcion: string
+    },
+    Descripcion: string
   }
-
-}
-
 const calculateAge = (birthDate: string) => {
   const birth = new Date(birthDate);
   const today = new Date();
@@ -115,7 +126,7 @@ export const columns: ColumnDef<Usuarios>[] = [
       // Accede a la propiedad "Usuarios" del objeto "row.original" (que representa la fila actual)
       // y mapea cada usuario a una cadena que contiene el "Cod_Usuario" y "Cod_Rol",
       // luego une estas cadenas con comas para mostrarlas en la celda.
-      return row.original.Usuario.Cod_Rol
+      return row.original.Cod_Rol
     },
   },
   {
@@ -149,48 +160,25 @@ export const columns: ColumnDef<Usuarios>[] = [
       const usuario = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 text-primary">
-              {/* <span className="sr-only">Open menu</span> */}
-              <Pencil></Pencil>
-              {/* <MoreHorizontal className="h-4 w-4" /> */}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Opciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(usuario.Identidad)}
-            >
-              Copiar Identidad del usuario
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <Dialog  >
-              <DialogTrigger className=" text-sm px-2 py-1.5">Editar Usuario</DialogTrigger>
-
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Editar Usuario</DialogTitle>
-                  <DialogDescription>
-                    <FormUsuario usuario={usuario} onSuccess={() => location.reload()} />
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
+        <div className="flex justify-center items-center  mt-3">
+        <Button variant="ghost" className="text-primary">
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Pencil></Pencil>
+                </DialogTrigger>
+                <DialogContent className="z-[90]">
+                    <DialogHeader className="text-center justify-center items-center w-full h-10">
+                        <DialogTitle>
+                            Datos Del Usuario
+                        </DialogTitle>
+                        <DialogDescription>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <FormUsuario usuario={usuario} />
+                </DialogContent>
             </Dialog>
-
-            <DropdownMenuItem className=" bg-red-400" onClick={async function onDelete() {
-              // const response = await fetch(`http://localhost:3000/usuario/${usuario.id}`, {
-              //     method: 'DELETE',
-              // });
-
-              // if (!response.ok) {
-              //     console.error('Error al borrar el usuario:', response.statusText);
-              //     return;
-              // }
-              // location.reload();
-            }}>Borrar Usuario</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        </Button>
+    </div>
       )
     },
   },

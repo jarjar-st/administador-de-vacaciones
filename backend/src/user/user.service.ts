@@ -13,7 +13,7 @@ export class UserService {
     // Verificar si el Correo ya está en uso en CorreoElectronico
     const existingEmail = await this.prisma.usuarios.findUnique({
       where: {
-        CorreoElectronico: dto.Usuario.CorreoElectronico
+        CorreoElectronico: dto.CorreoElectronico
       }
     });
 
@@ -22,8 +22,8 @@ export class UserService {
     }
 
     // Hash de la contraseña si se proporciona
-    const hashedPassword = dto.Usuario.Contrasena
-      ? await hash(dto.Usuario.Contrasena, 10)
+    const hashedPassword = dto.Contrasena
+      ? await hash(dto.Contrasena, 10)
       : null;
 
     // Crear la entidad Persona y relaciones
@@ -45,9 +45,9 @@ export class UserService {
     await this.prisma.empleados.create({
       data: {
         Cod_Persona: persona.Cod_Persona,
-        Cod_Departamento: dto.Empleado.Cod_Departamento,
-        Cod_Cargo: dto.Empleado.Cod_Cargo,
-        Fecha_Contrato: dto.Empleado.Fecha_Contrato
+        Cod_Departamento: dto.Cod_Departamento,
+        Cod_Cargo: dto.Cod_Cargo,
+        Fecha_Contrato: dto.Fecha_Contrato
       }
     });
 
@@ -56,15 +56,15 @@ export class UserService {
     const usuario = await this.prisma.usuarios.create({
       data: {
         Cod_Persona: persona.Cod_Persona,
-        CorreoElectronico: dto.Usuario.CorreoElectronico,
+        CorreoElectronico: dto.CorreoElectronico,
         Contrasena: hashedPassword,
-        Cod_EstadoUsuario: dto.Usuario.Cod_EstadoUsuario,
-        Cod_Rol: dto.Usuario.Cod_Rol,
-        Intentos_Fallidos: dto.Usuario.Intentos_Fallidos?.toString() || '0',
+        Cod_EstadoUsuario: dto.Cod_EstadoUsuario,
+        Cod_Rol: dto.Cod_Rol,
+        Intentos_Fallidos: dto.Intentos_Fallidos?.toString() || '0',
         Fecha_Creacion: new Date(),
-        Creado_Por: dto.Usuario.Creado_Por,
+        Creado_Por: 'Admin',
         Fecha_Modificacion: new Date(),
-        Modificado_Por: dto.Usuario.Modificado_Por || dto.Usuario.Creado_Por
+        Modificado_Por: 'Admin'
       }
     });
 
@@ -118,7 +118,7 @@ export class UserService {
 
   async findAll() {
     console.log('findAll method called');
-    return this.prisma.personas.findMany({
+    const personas = await this.prisma.personas.findMany({
       include: {
         Empleado: {
           include: {
@@ -134,6 +134,30 @@ export class UserService {
         }
       }
     });
+
+    const result = personas.map((persona) => ({
+      // ...persona,
+      Cod_Persona: persona.Cod_Persona,
+      Nombre: persona.Nombre,
+      Apellido: persona.Apellido,
+      Identidad: persona.Identidad,
+      Fecha_Nacimiento: persona.Fecha_Nacimiento,
+      Edad: persona.Edad,
+      Genero: persona.Genero,
+      Estado_Civil: persona.Estado_Civil,
+      Direccion: persona.Direccion,
+      Telefono: persona.Telefono,
+      ...persona.Empleado,
+      ...persona.Empleado.Departamento,
+      ...persona.Empleado.Cargo,
+      ...persona.Usuario,
+      ...persona.Usuario.Rol,
+      ...persona.Usuario.EstadoUsuario
+      // ...persona.Usuario.CorreoElectronico
+      // ...persona.Usuario.EstadoUsuario.Descripcion
+    }));
+
+    return result;
   }
 
   async allRoles() {
@@ -150,71 +174,66 @@ export class UserService {
     return this.prisma.cargo.findMany();
   }
 
-  // async update(id: number, dto: CreateUsuarioDto) {
-  //   const existingUser = await this.prisma.usuarios.findUnique({
-  //     where: { Cod_Usuario: id },
-  //     include: { Persona: true }
-  //   });
+  async update(id: number, dto: CreateUsuarioDto) {
+    const existingUser = await this.prisma.usuarios.findUnique({
+      where: { Cod_Usuario: id },
+      include: { Persona: true }
+    });
 
-  //   if (!existingUser) {
-  //     throw new BadRequestException('Usuario no encontrado');
-  //   }
+    if (!existingUser) {
+      console.log('Usuario no encontrado: ', id);
+      throw new BadRequestException('Usuario no encontrado');
+    }
 
-  //   // Hash de la nueva contraseña si se proporciona
-  //   const hashedPassword = dto.Usuarios.Contrasena
-  //     ? await hash(dto.Usuarios.Contrasena, 10)
-  //     : existingUser.Contrasena;
+    //   // Hash de la nueva contraseña si se proporciona
+    const hashedPassword = dto.Contrasena
+      ? await hash(dto.Contrasena, 10)
+      : existingUser.Contrasena;
 
-  //   // Actualizar la entidad Persona y relaciones
-  //   const persona = await this.prisma.personas.update({
-  //     where: { Cod_Persona: existingUser.Cod_Persona },
-  //     data: {
-  //       Nombre: dto.Nombre,
-  //       Apellido: dto.Apellido,
-  //       Identidad: dto.Identidad,
-  //       Fecha_Nacimiento: dto.Fecha_Nacimiento,
-  //       Genero: dto.Genero,
-  //       Estado_Civil: dto.Estado_Civil,
-  //       Direccion: dto.Direccion,
-  //       Telefonos: {
-  //         create: dto.Telefonos.map((telefono) => ({
-  //           Telefono: parseInt(telefono.Telefono)
-  //         }))
-  //       },
-  //       CorreoElectronico: {
-  //         create: dto.CorreoElectronico.map((Correo) => ({
-  //           Correo: Correo.Correo
-  //         }))
-  //       }
-  //     }
-  //   });
+    //   // Actualizar la entidad Persona y relaciones
+    const persona = await this.prisma.personas.update({
+      where: { Cod_Persona: existingUser.Cod_Persona },
+      data: {
+        Nombre: dto.Nombre,
+        Apellido: dto.Apellido,
+        Identidad: dto.Identidad,
+        Fecha_Nacimiento: dto.Fecha_Nacimiento,
+        Genero: dto.Genero,
+        Estado_Civil: dto.Estado_Civil,
+        Direccion: dto.Direccion,
+        Telefono: dto.Telefono
+      }
+    });
 
-  //   // Actualizar el empleado asociado a la persona
-  //   await this.prisma.empleados.update({
-  //     where: { Cod_Persona: persona.Cod_Persona },
-  //     data: {
-  //       Cod_Departamento: dto.empleado.codDepartamento,
-  //       Cod_Cargo: dto.empleado.codCargo,
-  //       Fecha_Contrato: dto.empleado.fechaContrato
-  //     }
-  //   });
+    //   // Actualizar el empleado asociado a la persona
+    await this.prisma.empleados.update({
+      where: { Cod_Persona: persona.Cod_Persona },
+      data: {
+        Cod_Departamento: dto.Cod_Departamento,
+        Cod_Cargo: dto.Cod_Cargo,
+        Fecha_Contrato: dto.Fecha_Contrato
+      }
+    });
 
-  //   // Actualizar el usuario asociado a la persona
-  //   const usuario = await this.prisma.usuarios.update({
-  //     where: { Cod_Persona: persona.Cod_Persona },
-  //     data: {
-  //       Contrasena: hashedPassword,
-  //       Cod_EstadoUsuario: dto.usuario.codEstadoUsuario,
-  //       Cod_Rol: dto.usuario.codRol,
-  //       Intentos_Fallidos: dto.usuario.intentosFallidos?.toString() || '0',
-  //       Fecha_Modificacion: new Date(),
-  //       Modificado_Por: dto.usuario.modificadoPor || dto.usuario.creadoPor
-  //     }
-  //   });
+    //   // Actualizar el usuario asociado a la persona
+    const usuario = await this.prisma.usuarios.update({
+      where: { Cod_Persona: persona.Cod_Persona },
+      data: {
+        Contrasena: hashedPassword,
+        Cod_EstadoUsuario: dto.Cod_EstadoUsuario,
+        Cod_Rol: dto.Cod_Rol,
+        Intentos_Fallidos: dto.Intentos_Fallidos?.toString() || '0',
+        Fecha_Creacion: new Date(),
+        Creado_Por: 'Admin',
+        Fecha_Modificacion: new Date(),
+        Modificado_Por: 'Admin',
+        CorreoElectronico: dto.CorreoElectronico
+      }
+    });
 
-  //   console.log('Usuario updated with ID:', usuario.Cod_Usuario);
+    console.log('Usuario updated with ID:', usuario.Cod_Usuario);
 
-  //   const { Contrasena, ...result } = usuario;
-  //   return result;
-  // }
+    const { Contrasena, ...result } = usuario;
+    return result;
+  }
 }

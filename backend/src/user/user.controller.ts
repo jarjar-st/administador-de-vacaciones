@@ -46,6 +46,7 @@ export class UserController {
   @Roles('admin')
   @Post('registrar-usuario')
   async crearUsuario(@Body() createUsuarioDto: CreateUsuarioDto) {
+    console.log('createUsuarioDto:', createUsuarioDto);
     return await this.userService.create(createUsuarioDto);
   }
   @Get()
@@ -62,11 +63,11 @@ export class UserController {
     return this.userService.findByEmail(email);
   }
 
-  // @Put(':id')
-  // async updateUser(
-  //   @Param('id') id: number,
-  //   @Body() updateUsuarioDto: UpdateUsuarioDto
-  // ) {
-  //   return await this.userService.update(id, updateUsuarioDto);
-  // }
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() createUsuarioDto: CreateUsuarioDto
+  ) {
+    return await this.userService.update(id, createUsuarioDto);
+  }
 }
