@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import FormUsuario from "./components/form-usuario"
+import FormUsuarioUpdate from "./components/form-test"
 
 
 export type Usuarios = {
@@ -30,7 +31,7 @@ export type Usuarios = {
   Genero: string;
   Estado_Civil: string;
   Direccion: string;
-  Telefonos: string;
+  Telefono: string;
   Empleado: {
     Cod_Departamento: number;
     Cod_Cargo: number;
@@ -172,7 +173,7 @@ export const columns: ColumnDef<Usuarios>[] = [
                 <DialogHeader>
                   <DialogTitle>Editar Usuario</DialogTitle>
                   <DialogDescription>
-                    <FormUsuario usuario={usuario} onSuccess={() => location.reload()} />
+                    <FormUsuarioUpdate usuario={usuario} onSuccess={() => location.reload()} />
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>

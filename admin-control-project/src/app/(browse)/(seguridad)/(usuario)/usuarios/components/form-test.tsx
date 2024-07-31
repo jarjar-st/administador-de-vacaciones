@@ -96,43 +96,43 @@ interface FormularioUsuarioProps {
     onSuccess?: () => void;
 }
 
-const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
+const FormUsuarioUpdate = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     const { data: session } = useSession();
     const router = useRouter();
     console.log("ESTE ES EL USUARIOOOOOasdasdas", usuario);
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
-        defaultValues: usuario ?? {
-            Nombre: "",
-            Apellido: "",
-            Identidad: "",
-            Fecha_Nacimiento: "",
-            Genero: "",
-            Estado_Civil: "",
-            Direccion: "",
-            Telefono: "",
-            Empleado: {
-                Cod_Departamento: 0,
-                Cod_Cargo: 0,
-                Fecha_Contrato: "",
-            },
-            Usuario: {
-                CorreoElectronico: "",
-                Contrasena: "",
-                Cod_Rol: 0,
-                Cod_EstadoUsuario: 0,
-
-            },
-        },
+        defaultValues: usuario
     });
 
-    useEffect(() => {
-        if (usuario) {
-            form.reset({
-                ...usuario,
-            });
-        }
-    }, [usuario, form]);
+    // useEffect(() => {
+    //     if (usuario) {
+    //         form.reset({
+    //             ...usuario,
+    //             Nombre: usuario.Nombre,
+    //             Apellido: usuario.Apellido,
+    //             Identidad: usuario.Identidad,
+    //             Telefonos: [
+    //                 ...usuario.Telefonos.map((telefono) => ({ Telefono: telefono.Telefono.toString() })),
+
+    //             ],
+    //             Fecha_Nacimiento: usuario.Fecha_Nacimiento ? usuario.Fecha_Nacimiento.split('T')[0] : "",
+    //             Empleados: {
+    //                 ...usuario.Empleados,
+    //                 Fecha_Contrato: usuario.Empleados.Fecha_Contrato ? usuario.Empleados.Fecha_Contrato.split('T')[0] : usuario.Empleados[0].Fecha_Contrato.split('T')[0],
+    //                 Cod_Departamento: usuario.Empleados[0].Cod_Departamento,
+    //                 Cod_Cargo: usuario.Empleados[0].Cod_Cargo,
+    //             },
+    //             Usuarios: {
+    //                 ...usuario.Usuarios,
+    //                 Contrasena: usuario.Usuarios[0].Contrasena,
+    //                 Cod_Rol: usuario.Usuarios[0].Cod_Rol,
+    //                 Cod_EstadoUsuario: usuario.Usuarios[0].Cod_EstadoUsuario,
+
+    //             }
+    //         });
+    //     }
+    // }, [usuario, form]);
 
     // const { fields: telefonosFields, append: appendTelefono } = useFieldArray({
     //     control: form.control,
@@ -188,15 +188,12 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     
         // Agregar Fecha_Creacion y Fecha_Modificacion
         const currentDateISO = new Date().toISOString();
-        // values.Usuario.Fecha_Creacion = currentDateISO;
-        // values.Usuario.Fecha_Modificacion = currentDateISO;
-
-        values.Usuario.Creado_Por = "admin";
-        values.Usuario.Modificado_Por = "admin";
+        values.Usuario.Fecha_Creacion = currentDateISO;
+        values.Usuario.Fecha_Modificacion = currentDateISO;
     
         try {
-            const url = usuario ? `${Backend_URL}/usuarios/${usuario.Cod_Persona}` : `${Backend_URL}/usuarios/registrar-usuario`;
-            const method = usuario ? 'PUT' : 'POST';
+            const url = `${Backend_URL}/usuarios/${usuario?.Cod_Persona}`;
+            const method = 'PUT';
             const response = await fetch(url, {
                 method,
                 headers: {
@@ -219,7 +216,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
         }
     };
     return (
-        <div className="flex justify-center h-[400px] overflow-y-auto ">
+        <div className="flex justify-center h-[400px] overflow-y-auto">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4 w-full max-w-lg">
                     <FormField
@@ -464,7 +461,7 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                         )}
                     />
                     <div className="col-span-2 flex justify-end">
-                    <Button type="submit" >{usuario ? "Editar" : "Agregar"}</Button>
+                        <Button type="submit">Registrar Usuario</Button>
                     </div>
                 </form>
             </Form>
@@ -472,4 +469,4 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
     );
 };
 
-export default FormUsuario;
+export default FormUsuarioUpdate;

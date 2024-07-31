@@ -33,6 +33,6 @@ async function getData(): Promise<Usuarios[]> {
     }, []);
   
     return (
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} usuarios={data} />
     )
   }

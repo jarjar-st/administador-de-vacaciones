@@ -81,7 +81,8 @@ export class CreateUsuarioDto {
   Direccion: string;
 
   @IsString()
-  Telefono: string;
+  @IsOptional()
+  Telefono?: string;
 
   // Campo adicional Edad
   @IsInt()

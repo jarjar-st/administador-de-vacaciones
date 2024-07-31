@@ -30,17 +30,20 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
+} from "@/components/ui/dialog"
 import FormUsuario from "./components/form-usuario"
+import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    usuarios: any
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    usuarios,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -75,24 +78,42 @@ export function DataTable<TData, TValue>({
                     className="max-w-sm"
                 />
 
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant={"default"}>Agregar</Button>
-                        </DialogTrigger>
-                        <DialogContent className=" z-[90]">
-                            <DialogHeader className="text-center justify-center items-center w-full h-10">
-                                <DialogTitle>
-                                    
-                                        Datos Del Usuario
-                                    
-                                </DialogTitle>
-                                <DialogDescription>
-                                </DialogDescription>
-                            </DialogHeader>
-                            <FormUsuario />
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant={"default"}>Agregar</Button>
+                    </DialogTrigger>
+                    <DialogContent className=" z-[90]">
+                        <DialogHeader className="text-center justify-center items-center w-full h-10">
+                            <DialogTitle>
 
-                        </DialogContent>
-                    </Dialog>
+                                Datos Del Usuario
+
+                            </DialogTitle>
+                            <DialogDescription>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <FormUsuario />
+
+                    </DialogContent>
+                </Dialog>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant={"default"}>Editar</Button>
+                    </DialogTrigger>
+                    <DialogContent className=" z-[90]">
+                        <DialogHeader className="text-center justify-center items-center w-full h-10">
+                            <DialogTitle>
+
+                                Datos Del Usuario
+
+                            </DialogTitle>
+                            <DialogDescription>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <FormUsuario usuario={usuarios[0]} />
+
+                    </DialogContent>
+                </Dialog>
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -126,6 +147,26 @@ export function DataTable<TData, TValue>({
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
+                                    <div className="flex justify-center items-center  mt-3">
+                                        <Button variant="ghost" className="text-primary">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Pencil></Pencil>
+                                                </DialogTrigger>
+                                                <DialogContent className="z-[90]">
+                                                    <DialogHeader className="text-center justify-center items-center w-full h-10">
+                                                        <DialogTitle>
+                                                            Datos Del Usuario
+                                                        </DialogTitle>
+                                                        <DialogDescription>
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <FormUsuario usuario={usuarios[row.id]} />
+                                                </DialogContent>
+                                            </Dialog>
+                                        </Button>
+                                    </div>
+
                                 </TableRow>
                             ))
                         ) : (
