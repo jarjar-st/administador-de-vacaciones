@@ -13,11 +13,31 @@ async function main() {
       Departamento: 'IT'
     }
   });
+  const departamentoDos = await prisma.departamento.create({
+    data: {
+      Departamento: 'Operaciones Tecnicas'
+    }
+  });
+  const departamentoTres = await prisma.departamento.create({
+    data: {
+      Departamento: 'Contabilidad'
+    }
+  });
 
   // Seed Cargo
   const cargo = await prisma.cargo.create({
     data: {
-      Cargo: 'Developer'
+      Cargo: 'Gerente'
+    }
+  });
+  const cargoDos = await prisma.cargo.create({
+    data: {
+      Cargo: 'Tecnico'
+    }
+  });
+  const cargoTres = await prisma.cargo.create({
+    data: {
+      Cargo: 'Secretaria'
     }
   });
 
@@ -88,7 +108,11 @@ async function main() {
   console.log({
     persona1,
     departamento,
+    departamentoDos,
+    departamentoTres,
     cargo,
+    cargoDos,
+    cargoTres,
     estadoUsuario,
     rol,
     rolUser

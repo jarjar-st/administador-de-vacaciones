@@ -17,7 +17,7 @@ model Personas {
   Genero           String     @db.VarChar(25)
   Estado_Civil     String     @db.VarChar(25)
   Direccion        String     @db.VarChar(100)
-  Telefono         String?
+  Telefono         String?    @unique
   Usuario          Usuarios?
   Empleado         Empleados?
 }

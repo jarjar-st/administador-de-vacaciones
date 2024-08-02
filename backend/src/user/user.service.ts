@@ -236,4 +236,28 @@ export class UserService {
     const { Contrasena, ...result } = usuario;
     return result;
   }
+
+  async updateUserStatus(id: number, isActive: boolean) {
+    // console.log("AQUII ESTA EL CAMBIO DE ESTADOOOOO", id, isActive);
+    const user = await this.prisma.usuarios.findUnique({
+      where: { Cod_Usuario: id }
+    });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    const currentUser = await this.prisma.usuarios.findUnique({
+      where: { Cod_Usuario: id },
+      select: { Cod_EstadoUsuario: true }
+    });
+
+    const newCodEstadoUsuario = currentUser.Cod_EstadoUsuario === 1 ? 2 : 1;
+
+    const userUpdated = await this.prisma.usuarios.update({
+      where: { Cod_Usuario: id },
+      data: { Cod_EstadoUsuario: newCodEstadoUsuario }
+    });
+    // user.Cod_EstadoUsuario = isActive ? 1 : 0;
+    console.log('Usuario updated with ID:', userUpdated);
+    return userUpdated;
+  }
 }

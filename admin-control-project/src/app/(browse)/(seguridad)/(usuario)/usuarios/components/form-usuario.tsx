@@ -262,7 +262,13 @@ const FormUsuario = ({ usuario, onSuccess }: FormularioUsuarioProps) => {
                             <FormItem>
                                 <FormLabel>Nombre</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Nombre" {...field} />
+                                    <Input placeholder="Nombre" {...field}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            const filteredValue = value.replace(/[^a-zA-Z]/g, '');
+                                            field.onChange(filteredValue);
+                                        }}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

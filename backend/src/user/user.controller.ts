@@ -63,11 +63,21 @@ export class UserController {
     return this.userService.findByEmail(email);
   }
 
+  @Roles('admin')
   @Put(':id')
   async updateUser(
     @Param('id') id: number,
     @Body() createUsuarioDto: CreateUsuarioDto
   ) {
     return await this.userService.update(id, createUsuarioDto);
+  }
+
+  @Roles('admin')
+  @Put('estado-usuario/:id')
+  async updateEstadoUsuario(
+    @Param('id') id: number,
+    @Body() isActive: boolean
+  ) {
+    return await this.userService.updateUserStatus(id, isActive);
   }
 }
