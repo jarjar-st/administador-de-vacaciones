@@ -105,6 +105,39 @@ async function main() {
     }
   });
 
+  //Seed Inventario
+
+  const inventario = await prisma.inventario.create({
+    data: {
+      Nombre_Item: 'Microfono',
+      Descripcion: 'Microfono de alta calidad',
+      Cantidad: 5
+    }
+  });
+
+  const inventario2 = await prisma.inventario.create({
+    data: {
+      Nombre_Item: 'Camara',
+      Descripcion: 'Camara de alta calidad',
+      Cantidad: 5
+    }
+  });
+
+  // Seed Salas
+  const sala1 = await prisma.salas.create({
+    data: {
+      Nombre_Sala: 'Sala 1',
+      Descripcion: 'Sala de grabación principal'
+    }
+  });
+
+  const sala2 = await prisma.salas.create({
+    data: {
+      Nombre_Sala: 'Sala 2',
+      Descripcion: 'Sala de grabación secundaria'
+    }
+  });
+
   console.log({
     persona1,
     departamento,
@@ -115,7 +148,11 @@ async function main() {
     cargoTres,
     estadoUsuario,
     rol,
-    rolUser
+    rolUser,
+    inventario,
+    inventario2,
+    sala1,
+    sala2
   });
 }
 

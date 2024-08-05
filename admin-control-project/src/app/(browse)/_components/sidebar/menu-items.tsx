@@ -66,12 +66,18 @@ export const MenuItems = () => {
             <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaVideo /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Reserva de Video</span></AccordionTrigger>
+
                     <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
-                    </AccordionContent>
-                    <AccordionContent>
-                        <Button variant={"default"}>Algo</Button>
-                    </AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'reserva-sala' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('reserva-sala')}
+                            >
+                                <Link href={"/formulario-grabacion"}>
+                                    Reservar Sala
+                                </Link>
+                            </Button>
+                        </AccordionContent>
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>

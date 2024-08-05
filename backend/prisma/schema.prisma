@@ -100,4 +100,43 @@ model Usuarios {
   Persona            Personas       @relation(fields: [Cod_Persona], references: [Cod_Persona])
   EstadoUsuario      Estado_Usuario @relation(fields: [Cod_EstadoUsuario], references: [Cod_EstadoUsuario])
   Rol                Roles          @relation(fields: [Cod_Rol], references: [Cod_Rol])
+  ReservasGrabacion ReservasGrabacion[]
 }
+
+model Inventario {
+  Cod_Inventario      Int               @id @default(autoincrement())
+  Nombre_Item         String            @db.VarChar(45)
+  Descripcion         String            @db.VarChar(255)
+  Cantidad            Int
+  ReservasInventario  ReservasInventario[]
+}
+
+model ReservasGrabacion {
+  Cod_Reserva         Int               @id @default(autoincrement())
+  Cod_Usuario         Int
+  Cod_Sala            Int
+  Fecha_Reserva       DateTime
+  Hora_Inicio         DateTime
+  Hora_Fin            DateTime
+  Estado_Reserva      String            @default("Pendiente") // Pendiente, Aprobada, Rechazada
+  Usuario             Usuarios          @relation(fields: [Cod_Usuario], references: [Cod_Usuario])
+  Sala                Salas             @relation(fields: [Cod_Sala], references: [Cod_Sala])
+  ReservasInventario  ReservasInventario[]
+}
+
+model Salas {
+  Cod_Sala            Int               @id @default(autoincrement())
+  Nombre_Sala         String            @unique @db.VarChar(45)
+  Descripcion         String            @db.VarChar(255)
+  ReservasGrabacion   ReservasGrabacion[]
+}
+
+model ReservasInventario {
+  Cod_Reserva         Int
+  Cod_Inventario      Int
+  CantidadSolicitada  Int
+  Reserva             ReservasGrabacion @relation(fields: [Cod_Reserva], references: [Cod_Reserva])
+  Inventario          Inventario        @relation(fields: [Cod_Inventario], references: [Cod_Inventario])
+  @@id([Cod_Reserva, Cod_Inventario])
+}
+
