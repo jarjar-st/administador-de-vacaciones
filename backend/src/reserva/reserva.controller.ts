@@ -50,11 +50,12 @@ export class ReservaController {
 
   @UseGuards(JwtGuard)
   @Roles('admin')
-  @Put(':id')
+  @Put('/:id')
   async update(
     @Param('id') id: number,
     @Body() updateReservaDto: UpdateReservaDto
   ) {
+    console.log('updateReservaDto', updateReservaDto);
     return this.reservaService.update(id, updateReservaDto);
   }
 

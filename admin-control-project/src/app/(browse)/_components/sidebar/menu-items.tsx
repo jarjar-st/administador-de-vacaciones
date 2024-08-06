@@ -49,7 +49,7 @@ export const MenuItems = () => {
                         </AccordionContent>
 
 
-                        <AccordionContent>
+                        {/* <AccordionContent>
                             <Button
                                 variant={`${clickedButtonId === 'seguridad-rol' ? 'default' : 'link'}`}
                                 className={`w-full rounded-none`}
@@ -57,7 +57,7 @@ export const MenuItems = () => {
                             >
                                 Rol
                             </Button>
-                        </AccordionContent>
+                        </AccordionContent> */}
 
 
                     </AccordionItem>
@@ -75,6 +75,17 @@ export const MenuItems = () => {
                             >
                                 <Link href={"/formulario-grabacion"}>
                                     Reservar Sala
+                                </Link>
+                            </Button>
+                        </AccordionContent>
+                    <AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'solicitud-sala' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('solicitud-sala')}
+                            >
+                                <Link href={"/solicitudes-grabacion"}>
+                                solicitudes
                                 </Link>
                             </Button>
                         </AccordionContent>

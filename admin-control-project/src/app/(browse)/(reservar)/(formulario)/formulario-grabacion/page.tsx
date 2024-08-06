@@ -47,7 +47,7 @@ const reservaSchema = z.object({
 const FormReserva = () => {
     const { data: session } = useSession();
     const router = useRouter();
-   
+
     const form = useForm<z.infer<typeof reservaSchema>>({
         resolver: zodResolver(reservaSchema),
         defaultValues: {
@@ -70,7 +70,7 @@ const FormReserva = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('response data', data);  
+                    console.log('response data', data);
                     setSalas(data);
                 }
             } catch (error) {
@@ -86,7 +86,7 @@ const FormReserva = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('response data', data); 
+                    console.log('response data', data);
                     setInventario(data);
                 }
             } catch (error) {
@@ -144,7 +144,8 @@ const FormReserva = () => {
     };
 
     return (
-        <div className="flex justify-center h-[100vh] items-center overflow-y-auto custom-scrollbar-form">
+        <div className="flex flex-col justify-center gap-28 h-[100vh] items-center overflow-y-auto custom-scrollbar-form">
+            <h1 className=' text-5xl font-bold'>Registro de Grabación</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4 w-full max-w-lg">
                     <FormField
@@ -170,6 +171,7 @@ const FormReserva = () => {
                             </FormItem>
                         )}
                     />
+
                     <FormField
                         control={form.control}
                         name="Fecha_Reserva"
@@ -209,70 +211,71 @@ const FormReserva = () => {
                             </FormItem>
                         )}
                     />
-<FormField
-    control={form.control}
-    name="Inventario"
-    render={({ field }) => (
-        <FormItem>
-            <FormLabel>Inventario</FormLabel>
-            <FormControl>
-                <div>
-                    {inventario.map((item) => {
-                        const selectedItem = (field.value ?? []).find(
-                            (inv) => inv.Cod_Inventario === item.Cod_Inventario
-                        );
-                        return (
-                            <div key={item.Cod_Inventario} className="flex items-center mb-2">
-                                <input
-                                    type="checkbox"
-                                    value={item.Cod_Inventario}
-                                    checked={!!selectedItem}
-                                    onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        const codInventario = parseInt(e.target.value, 10);
-                                        if (checked) {
-                                            field.onChange([
-                                                ...(field.value ?? []),
-                                                { Cod_Inventario: codInventario, CantidadSolicitada: 1 }
-                                            ]);
-                                        } else {
-                                            field.onChange(
-                                                (field.value ?? []).filter(
-                                                    (inv) => inv.Cod_Inventario !== codInventario
-                                                )
+                    <FormField
+                        control={form.control}
+                        name="Inventario"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Inventario</FormLabel>
+                                <FormControl>
+                                    <div>
+                                        {inventario.map((item) => {
+                                            const selectedItem = (field.value ?? []).find(
+                                                (inv) => inv.Cod_Inventario === item.Cod_Inventario
                                             );
-                                        }
-                                    }}
-                                />
-                                <span className="ml-2">{item.Nombre_Item}</span>
-                                {selectedItem && (
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max={item.Cantidad}
-                                        value={selectedItem.CantidadSolicitada}
-                                        onChange={(e) => {
-                                            const cantidad = parseInt(e.target.value, 10);
-                                            field.onChange(
-                                                (field.value ?? []).map((inv) =>
-                                                    inv.Cod_Inventario === item.Cod_Inventario
-                                                        ? { ...inv, CantidadSolicitada: cantidad }
-                                                        : inv
-                                                )
+                                            return (
+                                                <div key={item.Cod_Inventario} className="flex items-center mb-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        value={item.Cod_Inventario}
+                                                        checked={!!selectedItem}
+                                                        onChange={(e) => {
+                                                            const checked = e.target.checked;
+                                                            const codInventario = parseInt(e.target.value, 10);
+                                                            if (checked) {
+                                                                field.onChange([
+                                                                    ...(field.value ?? []),
+                                                                    { Cod_Inventario: codInventario, CantidadSolicitada: 1 }
+                                                                ]);
+                                                            } else {
+                                                                field.onChange(
+                                                                    (field.value ?? []).filter(
+                                                                        (inv) => inv.Cod_Inventario !== codInventario
+                                                                    )
+                                                                );
+                                                            }
+                                                        }}
+                                                    />
+                                                    <span className="ml-2">{item.Nombre_Item}</span>
+                                                    {selectedItem && (
+                                                        <input
+                                                            type="number"
+                                                            
+                                                            min="1"
+                                                            max={item.Cantidad}
+                                                            value={selectedItem.CantidadSolicitada}
+                                                            onChange={(e) => {
+                                                                const cantidad = parseInt(e.target.value, 10);
+                                                                field.onChange(
+                                                                    (field.value ?? []).map((inv) =>
+                                                                        inv.Cod_Inventario === item.Cod_Inventario
+                                                                            ? { ...inv, CantidadSolicitada: cantidad }
+                                                                            : inv
+                                                                    )
+                                                                );
+                                                            }}
+                                                            className="ml-8 w-16 bottom-4"
+                                                        />
+                                                    )}
+                                                </div>
                                             );
-                                        }}
-                                        className="ml-2 w-16"
-                                    />
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </FormControl>
-            <FormMessage />
-        </FormItem>
-    )}
-/>
+                                        })}
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div className="col-span-2 flex justify-end">
                         <Button type="submit">Crear Reserva</Button>
                     </div>

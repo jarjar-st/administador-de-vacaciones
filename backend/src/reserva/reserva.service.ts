@@ -68,6 +68,7 @@ export class ReservaService {
 
     const formattedReservas = reservas.map((reserva) => ({
       Cod_Reserva: reserva.Cod_Reserva,
+      Cod_Usuario: reserva.Cod_Usuario,
       Usuario: `${reserva.Usuario.Persona.Nombre} ${reserva.Usuario.Persona.Apellido}`,
       Cod_Sala: reserva.Cod_Sala,
       Nombre_Sala: reserva.Sala.Nombre_Sala,
@@ -92,6 +93,7 @@ export class ReservaService {
   }
 
   async update(id: number, dto: UpdateReservaDto) {
+    console.log("ESTA ES LA DATA DEL UPDATE", dto);
     return await this.prisma.reservasGrabacion.update({
       where: { Cod_Reserva: id },
       data: { ...dto }

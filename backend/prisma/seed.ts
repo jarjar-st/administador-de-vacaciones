@@ -47,6 +47,11 @@ async function main() {
       Descripcion: 'Activo'
     }
   });
+  const estadoUsuario2 = await prisma.estado_Usuario.create({
+    data: {
+      Descripcion: 'Inactivo'
+    }
+  });
 
   // Seed Roles
   const rol = await prisma.roles.create({
@@ -147,6 +152,7 @@ async function main() {
     cargoDos,
     cargoTres,
     estadoUsuario,
+    estadoUsuario2,
     rol,
     rolUser,
     inventario,
