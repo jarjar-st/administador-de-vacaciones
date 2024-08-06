@@ -23,7 +23,7 @@ export class ReservaService {
       );
     }
 
-    return await this.prisma.reservasGrabacion.create({
+    const reserva = await this.prisma.reservasGrabacion.create({
       data: {
         Cod_Usuario: dto.Cod_Usuario,
         Cod_Sala: dto.Cod_Sala,
@@ -33,12 +33,55 @@ export class ReservaService {
         Estado_Reserva: dto.Estado_Reserva || 'Pendiente'
       }
     });
+
+    if (dto.Inventario && dto.Inventario.length > 0) {
+      const reservasInventario = dto.Inventario.map((item) => ({
+        Cod_Reserva: reserva.Cod_Reserva,
+        Cod_Inventario: item.Cod_Inventario,
+        CantidadSolicitada: item.CantidadSolicitada
+      }));
+
+      await this.prisma.reservasInventario.createMany({
+        data: reservasInventario
+      });
+    }
+
+    return reserva;
   }
 
   async findAll() {
-    return await this.prisma.reservasGrabacion.findMany({
-      include: { Usuario: true, Sala: true }
+    const reservas = await this.prisma.reservasGrabacion.findMany({
+      include: {
+        Usuario: {
+          include: {
+            Persona: true
+          }
+        },
+        Sala: true,
+        ReservasInventario: {
+          include: {
+            Inventario: true
+          }
+        }
+      }
     });
+
+    const formattedReservas = reservas.map((reserva) => ({
+      Cod_Reserva: reserva.Cod_Reserva,
+      Usuario: `${reserva.Usuario.Persona.Nombre} ${reserva.Usuario.Persona.Apellido}`,
+      Cod_Sala: reserva.Cod_Sala,
+      Nombre_Sala: reserva.Sala.Nombre_Sala,
+      Fecha_Reserva: reserva.Fecha_Reserva,
+      Hora_Inicio: reserva.Hora_Inicio,
+      Hora_Fin: reserva.Hora_Fin,
+      Estado_Reserva: reserva.Estado_Reserva,
+      Inventario: reserva.ReservasInventario.map((item) => ({
+        Nombre_Item: item.Inventario.Nombre_Item,
+        CantidadSolicitada: item.CantidadSolicitada
+      }))
+    }));
+
+    return formattedReservas;
   }
 
   async findOne(id: number) {
@@ -59,5 +102,13 @@ export class ReservaService {
     return await this.prisma.reservasGrabacion.delete({
       where: { Cod_Reserva: id }
     });
+  }
+
+  async findAllSalas() {
+    return await this.prisma.salas.findMany();
+  }
+
+  async findAllInventario() {
+    return await this.prisma.inventario.findMany();
   }
 }

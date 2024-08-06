@@ -18,6 +18,15 @@ import { Roles } from 'src/auth/roles.decorator';
 export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
+  @Get('/salas')
+  async findAllSalas() {
+    return this.reservaService.findAllSalas();
+  }
+
+  @Get('/inventario')
+  async findAllInvetarios() {
+    return this.reservaService.findAllInventario();
+  }
   @UseGuards(JwtGuard)
   @Roles('admin', 'user')
   @Post()
@@ -25,8 +34,8 @@ export class ReservaController {
     return this.reservaService.create(createReservaDto);
   }
 
-  @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  // @UseGuards(JwtGuard)
+  // @Roles('admin', 'user')
   @Get()
   async findAll() {
     return this.reservaService.findAll();

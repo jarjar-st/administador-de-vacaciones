@@ -118,7 +118,7 @@ model ReservasGrabacion {
   Fecha_Reserva       DateTime
   Hora_Inicio         DateTime
   Hora_Fin            DateTime
-  Estado_Reserva      String            @default("Pendiente") // Pendiente, Aprobada, Rechazada
+  Estado_Reserva      String            @default("Pendiente") 
   Usuario             Usuarios          @relation(fields: [Cod_Usuario], references: [Cod_Usuario])
   Sala                Salas             @relation(fields: [Cod_Sala], references: [Cod_Sala])
   ReservasInventario  ReservasInventario[]
