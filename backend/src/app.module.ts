@@ -6,9 +6,16 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma.service';
 import { ReservaModule } from './reserva/reserva.module';
+import { InventarioModule } from './Inventario/inventario.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UserModule, AuthModule, ReservaModule],
+  imports: [
+    ConfigModule.forRoot(),
+    UserModule,
+    AuthModule,
+    ReservaModule,
+    InventarioModule
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService]
 })
