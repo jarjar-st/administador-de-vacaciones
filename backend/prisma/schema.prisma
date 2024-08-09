@@ -43,6 +43,10 @@ model Empleados {
   Persona          Personas     @relation(fields: [Cod_Persona], references: [Cod_Persona])
   Departamento     Departamento @relation(fields: [Cod_Departamento], references: [Cod_Departamento])
   Cargo            Cargo        @relation(fields: [Cod_Cargo], references: [Cod_Cargo])
+
+  Vacaciones Vacaciones[]
+
+  VacacionesDisponibles VacacionesDisponibles[]
 }
 
 model Estado_Usuario {
@@ -139,4 +143,29 @@ model ReservasInventario {
   Inventario          Inventario        @relation(fields: [Cod_Inventario], references: [Cod_Inventario])
   @@id([Cod_Reserva, Cod_Inventario])
 }
+
+model Vacaciones {
+  Cod_Vacacion       Int       @id @default(autoincrement())
+  Cod_Empleado       Int
+  Fecha_Solicitud    DateTime  @default(now())
+  Fecha_Inicio       DateTime
+  Fecha_Fin          DateTime
+  Dias_Solicitados   Int
+  Estado_Solicitud   String    @default("Pendiente")
+  Empleado           Empleados @relation(fields: [Cod_Empleado], references: [Cod_Empleado])
+
+  @@index([Cod_Empleado])
+}
+
+model VacacionesDisponibles {
+  Cod_VacacionDisponibles Int       @id @default(autoincrement())
+  Cod_Empleado            Int
+  Anio                    Int       // Año en el que se acumulan las vacaciones
+  Dias_Disponibles        Int       // Días acumulados para el año
+  Dias_Utilizados         Int       // Días ya tomados en el año
+  Empleado                Empleados @relation(fields: [Cod_Empleado], references: [Cod_Empleado])
+  
+  @@unique([Cod_Empleado, Anio])   // Evita duplicados por año
+}
+
 
