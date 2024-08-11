@@ -112,14 +112,16 @@ export const MenuItems = () => {
                 <AccordionItem value="item-1">
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaUmbrellaBeach /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Vacaciones</span></AccordionTrigger>
                     <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
-                    </AccordionContent>
-                    <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
-                    </AccordionContent>
-                    <AccordionContent>
-                        <Button>Algo</Button>
-                    </AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'formulario-vacaciones' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('formulario-vacaciones')}
+                            >
+                                <Link href={"/formulario-vacaciones"}>
+                                Solicitar Vacaciones
+                                </Link>
+                            </Button>
+                        </AccordionContent>
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>

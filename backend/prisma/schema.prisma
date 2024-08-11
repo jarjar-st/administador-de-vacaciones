@@ -40,6 +40,7 @@ model Empleados {
   Cod_Departamento Int
   Cod_Cargo        Int
   Fecha_Contrato   DateTime
+  Dias_Vacaciones_Acumulados Int     @default(0)
   Persona          Personas     @relation(fields: [Cod_Persona], references: [Cod_Persona])
   Departamento     Departamento @relation(fields: [Cod_Departamento], references: [Cod_Departamento])
   Cargo            Cargo        @relation(fields: [Cod_Cargo], references: [Cod_Cargo])
