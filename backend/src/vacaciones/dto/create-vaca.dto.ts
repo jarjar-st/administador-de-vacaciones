@@ -5,11 +5,11 @@ export class CreateVacaDto {
   @IsNotEmpty()
   Cod_Empleado: number;
 
-//   @IsDate()
+  //   @IsDate()
   @IsNotEmpty()
   Fecha_Inicio: Date;
 
-//   @IsDate()
+  //   @IsDate()
   @IsNotEmpty()
   Fecha_Fin: Date;
 

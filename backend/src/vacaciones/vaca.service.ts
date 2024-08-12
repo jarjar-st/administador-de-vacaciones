@@ -96,8 +96,8 @@ export class VacaService {
     });
   }
 
-  async approveOrDeny(id: number, aprobado: boolean) {
-    const estado = aprobado ? 'Aprobado' : 'Denegado';
+  async approveOrDeny(id: number, aprobado: string) {
+    console.log('ESTE ES EL Aprobado:', aprobado['aprobado']);
 
     const vacacion = await this.prisma.vacaciones.findUnique({
       where: { Cod_Vacacion: id }
@@ -111,19 +111,35 @@ export class VacaService {
       where: { Cod_Empleado: vacacion.Cod_Empleado }
     });
 
+    // Obtener el estado actual de la solicitud
+    const estadoActual = vacacion.Estado_Solicitud;
+
     const estadoSolicitud = await this.prisma.vacaciones.update({
       where: { Cod_Vacacion: id },
       data: {
-        Estado_Solicitud: estado
+        Estado_Solicitud: aprobado['aprobado']
       }
     });
 
-    if (aprobado) {
+    if (aprobado['aprobado'] === 'Aceptado') {
+      await this.prisma.empleados.update({
+        where: { Cod_Empleado: vacacion.Cod_Empleado },
+        data: {
+          Dias_Vacaciones_Acumulados: Math.max(
+            empleado.Dias_Vacaciones_Acumulados - vacacion.Dias_Solicitados,
+            0
+          )
+        }
+      });
+    } else if (
+      estadoActual === 'Aceptado' &&
+      aprobado['aprobado'] === 'Rechazado'
+    ) {
       await this.prisma.empleados.update({
         where: { Cod_Empleado: vacacion.Cod_Empleado },
         data: {
           Dias_Vacaciones_Acumulados:
-            empleado.Dias_Vacaciones_Acumulados - vacacion.Dias_Solicitados
+            empleado.Dias_Vacaciones_Acumulados + vacacion.Dias_Solicitados
         }
       });
     }

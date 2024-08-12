@@ -2,10 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class ReservaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService
+  ) {}
 
   async create(dto: CreateReservaDto) {
     const existingReserva = await this.prisma.reservasGrabacion.findFirst({
@@ -45,6 +49,31 @@ export class ReservaService {
         data: reservasInventario
       });
     }
+
+    // Enviar correo de confirmación de reserva
+    const usuario = await this.prisma.usuarios.findUnique({
+      where: { Cod_Usuario: dto.Cod_Usuario },
+      include: { Persona: true }
+    });
+
+    const sala = await this.prisma.salas.findUnique({
+      where: { Cod_Sala: dto.Cod_Sala }
+    });
+
+    const subject = 'Confirmación de Reserva';
+    const text = `Hola Admin, la reserva de la sala ${sala.Nombre_Sala} ha sido creada con éxito.`;
+    const html = `<p>Hola Admin,</p>
+                  <p>La reserva de la sala <strong>${sala.Nombre_Sala}</strong> ha sido creada con éxito.</p>
+                  <p>Fecha: ${dto.Fecha_Reserva}</p>
+                  <p>Hora de Inicio: ${dto.Hora_Inicio}</p>
+                  <p>Hora de Fin: ${dto.Hora_Fin}</p>`;
+
+    await this.mailService.sendMail(
+      'manuel.ruiz@vtv.com.hn',
+      subject,
+      text,
+      html
+    );
 
     return reserva;
   }
@@ -93,7 +122,7 @@ export class ReservaService {
   }
 
   async update(id: number, dto: UpdateReservaDto) {
-    console.log("ESTA ES LA DATA DEL UPDATE", dto);
+    console.log('ESTA ES LA DATA DEL UPDATE', dto);
     return await this.prisma.reservasGrabacion.update({
       where: { Cod_Reserva: id },
       data: { ...dto }

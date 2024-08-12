@@ -48,6 +48,16 @@ export class VacaController {
 
   @UseGuards(JwtGuard)
   @Roles('admin')
+  @Put('/estado-vacaciones/:id')
+  async updateEstadoVacaciones(
+    @Param('id') id: number,
+    @Body() aprobado: string
+  ) {
+    return this.vacaService.approveOrDeny(id, aprobado);
+  }
+
+  @UseGuards(JwtGuard)
+  @Roles('admin')
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return this.vacaService.remove(id);

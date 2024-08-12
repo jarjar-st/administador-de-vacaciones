@@ -129,7 +129,7 @@ export const MenuItems = () => {
                                 onClick={() => handleButtonClick('solicitudes-vacaciones')}
                             >
                                 <Link href={"/solicitudes-vacaciones"}>
-                                Solicitar Vacaciones
+                                Solicitudes de Vacaciones
                                 </Link>
                             </Button>
                         </AccordionContent>

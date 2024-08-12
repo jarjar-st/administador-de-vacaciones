@@ -83,16 +83,20 @@ export const columns: ColumnDef<Solicitud>[] = [
   //   },
   // },
   {
-    accessorKey: "Usuario",
-    header: () => {
+    accessorKey: "Empleado.Persona.Nombre",
+    header: ({ column }) => {
       return (
-        <div className="text-primary">
-          Fecha
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-primary"
+        >
+          Usuario
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => {
-  
       return (
         <div>
           {row.original.Empleado.Persona.Nombre}
@@ -120,14 +124,14 @@ export const columns: ColumnDef<Solicitud>[] = [
     header: () => {
       return (
         <div className="text-primary">
-          Fecha
+          Fecha Solicitud
         </div>
       );
     },
     cell: ({ row }) => {
       const fechaReserva = new Date(row.original.Fecha_Solicitud);
   
-      const opciones = { month: 'long', day: 'numeric' } as Intl.DateTimeFormatOptions;
+      const opciones = { year: 'numeric', month: 'short', day: 'numeric' } as Intl.DateTimeFormatOptions;
       const fechaFormateada = fechaReserva.toLocaleDateString('es-ES', opciones);
   
       return (
@@ -142,14 +146,14 @@ export const columns: ColumnDef<Solicitud>[] = [
     header: () => {
       return (
         <div className="text-primary">
-          Fecha
+          Inicio
         </div>
       );
     },
     cell: ({ row }) => {
       const fechaReserva = new Date(row.original.Fecha_Inicio);
   
-      const opciones = { month: 'long', day: 'numeric' } as Intl.DateTimeFormatOptions;
+      const opciones = {  year: 'numeric', month: 'short', day: 'numeric' } as Intl.DateTimeFormatOptions;
       const fechaFormateada = fechaReserva.toLocaleDateString('es-ES', opciones);
   
       return (
@@ -164,14 +168,14 @@ export const columns: ColumnDef<Solicitud>[] = [
     header: () => {
       return (
         <div className="text-primary">
-          Fecha
+          Fin
         </div>
       );
     },
     cell: ({ row }) => {
       const fechaReserva = new Date(row.original.Fecha_Fin);
   
-      const opciones = { month: 'long', day: 'numeric' } as Intl.DateTimeFormatOptions;
+      const opciones = {  year: 'numeric', month: 'short', day: 'numeric' } as Intl.DateTimeFormatOptions;
       const fechaFormateada = fechaReserva.toLocaleDateString('es-ES', opciones);
   
       return (
@@ -190,7 +194,7 @@ export const columns: ColumnDef<Solicitud>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="text-primary"
         >
-          Dias Solicitados
+          Dias
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -238,7 +242,7 @@ export const columns: ColumnDef<Solicitud>[] = [
 
       return (
         <div
-          className={`flex justify-center items-center w-[50%] h-8 rounded-xl bg- text-black font-bold  ${getEstadoStyle(estado)}`}
+          className={`flex justify-center items-center w-[80%] h-8 rounded-xl bg- text-black font-bold  ${getEstadoStyle(estado)}`}
         >
           {estado}
         </div>
@@ -256,59 +260,59 @@ export const columns: ColumnDef<Solicitud>[] = [
   //   },
   //   cell: ({ row }) => `${calculateAge(row.original.Fecha_Nacimiento)} años`,
   // },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     const solicitud = row.original;
-  //     const { data: session } = useSession();
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const solicitud = row.original;
+      const { data: session } = useSession();
 
-  //     const updateEstadoReserva = async (nuevoEstado: string) => {
-  //       const response = await fetch(`${Backend_URL}/reservas/${solicitud.Cod_Reserva}`, {
-  //         method: 'PUT',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${session?.backendTokens.accessToken}`,
-  //         },
-  //         body: JSON.stringify({
-  //           Estado_Reserva: nuevoEstado
-  //         })
-  //       });
+      const updateEstadoReserva = async (nuevoEstado: string) => {
+        const response = await fetch(`${Backend_URL}/vacaciones/estado-vacaciones/${solicitud.Cod_Vacacion}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.backendTokens.accessToken}`,
+          },
+          body: JSON.stringify({
+            aprobado: nuevoEstado
+          })
+        });
 
-  //       if (!response.ok) {
-  //         console.error('Error al actualizar el estado de la reserva:', response.statusText);
-  //         return;
-  //       }
-  //       location.reload();
-  //     };
+        if (!response.ok) {
+          console.error('Error al actualizar el estado de la reserva:', response.statusText);
+          return;
+        }
+        location.reload();
+      };
 
-  //     return (
-  //       <Auth roles={['admin']}>
-  //         <div className="flex justify-center items-center mt-3">
-  //           {solicitud.Estado_Reserva === "Pendiente" && (
-  //             <div className=" flex flex-row gap-4">
-  //               <Button variant="default" className=" bg-green-500" onClick={async () => await updateEstadoReserva("Aceptado")}>
-  //                 <Check />
-  //               </Button>
-  //               <Button variant="destructive" className="" onClick={async () => await updateEstadoReserva("Rechazado")}>
-  //                 <Ban />
-  //               </Button>
-  //             </div>
-  //           )}
-  //           {solicitud.Estado_Reserva === "Aceptado" && (
-  //             <Button variant="destructive" onClick={async () => await updateEstadoReserva("Rechazado")}>
-  //               {/* Rechazar */}
-  //               <Ban />
-  //             </Button>
-  //           )}
-  //           {solicitud.Estado_Reserva === "Rechazado" && (
-  //             <Button variant="default" className=" bg-green-500" onClick={async () => await updateEstadoReserva("Aceptado")}>
-  //               {/* Aprobar */}
-  //               <Check />
-  //             </Button>
-  //           )}
-  //         </div>
-  //       </Auth>
-  //     )
-  //   },
-  // },
+      return (
+        <Auth roles={['admin']}>
+          <div className="flex justify-center items-center mt-3">
+            {solicitud.Estado_Solicitud === "Pendiente" && (
+              <div className=" flex flex-row gap-4">
+                <Button variant="default" className=" bg-green-500" onClick={async () => await updateEstadoReserva("Aceptado")}>
+                  <Check />
+                </Button>
+                <Button variant="destructive" className="" onClick={async () => await updateEstadoReserva("Rechazado")}>
+                  <Ban />
+                </Button>
+              </div>
+            )}
+            {solicitud.Estado_Solicitud === "Aceptado" && (
+              <Button variant="destructive" onClick={async () => await updateEstadoReserva("Rechazado")}>
+                {/* Rechazar */}
+                <Ban />
+              </Button>
+            )}
+            {solicitud.Estado_Solicitud === "Rechazado" && (
+              <Button variant="default" className=" bg-green-500" onClick={async () => await updateEstadoReserva("Aceptado")}>
+                {/* Aprobar */}
+                <Check />
+              </Button>
+            )}
+          </div>
+        </Auth>
+      )
+    },
+  },
 ]
