@@ -17,6 +17,20 @@ export class VacaService {
       );
     }
 
+    const empleado = await this.prisma.empleados.findUnique({
+      where: { Cod_Empleado: dto.Cod_Empleado }
+    });
+
+    if (!empleado) {
+      throw new BadRequestException('Empleado no encontrado.');
+    }
+
+    if (empleado.Dias_Vacaciones_Acumulados < diasSolicitados) {
+      throw new BadRequestException(
+        `No tienes suficientes días de vacaciones disponibles. ${empleado.Dias_Vacaciones_Acumulados} días disponibles.`
+      );
+    }
+
     const vaca = await this.prisma.vacaciones.create({
       data: {
         Cod_Empleado: dto.Cod_Empleado,
@@ -26,6 +40,15 @@ export class VacaService {
         Estado_Solicitud: dto.Estado_Solicitud || 'Pendiente'
       }
     });
+
+    // Actualizar los días de vacaciones acumulados
+    // await this.prisma.empleados.update({
+    //   where: { Cod_Empleado: dto.Cod_Empleado },
+    //   data: {
+    //     Dias_Vacaciones_Acumulados:
+    //       empleado.Dias_Vacaciones_Acumulados - diasSolicitados
+    //   }
+    // });
 
     return vaca;
   }
@@ -73,14 +96,51 @@ export class VacaService {
     });
   }
 
-  async approveOrDeny(id: number, approve: boolean) {
-    const estado = approve ? 'Aprobado' : 'Denegado';
+  async approveOrDeny(id: number, aprobado: boolean) {
+    const estado = aprobado ? 'Aprobado' : 'Denegado';
 
-    return await this.prisma.vacaciones.update({
+    const vacacion = await this.prisma.vacaciones.findUnique({
+      where: { Cod_Vacacion: id }
+    });
+
+    if (!vacacion) {
+      throw new BadRequestException('Vacación no encontrada.');
+    }
+
+    const empleado = await this.prisma.empleados.findUnique({
+      where: { Cod_Empleado: vacacion.Cod_Empleado }
+    });
+
+    const estadoSolicitud = await this.prisma.vacaciones.update({
       where: { Cod_Vacacion: id },
       data: {
         Estado_Solicitud: estado
       }
     });
+
+    if (aprobado) {
+      await this.prisma.empleados.update({
+        where: { Cod_Empleado: vacacion.Cod_Empleado },
+        data: {
+          Dias_Vacaciones_Acumulados:
+            empleado.Dias_Vacaciones_Acumulados - vacacion.Dias_Solicitados
+        }
+      });
+    }
+
+    return estadoSolicitud;
+  }
+
+  async getDiasVacacionesDisponibles(Cod_Empleado: number) {
+    const empleado = await this.prisma.empleados.findUnique({
+      where: { Cod_Empleado },
+      select: { Dias_Vacaciones_Acumulados: true }
+    });
+
+    if (!empleado) {
+      throw new BadRequestException('Empleado no encontrado.');
+    }
+
+    return empleado.Dias_Vacaciones_Acumulados;
   }
 }

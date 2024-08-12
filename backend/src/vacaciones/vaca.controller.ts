@@ -25,8 +25,8 @@ export class VacaController {
     return this.vacaService.create(createVacaDto);
   }
 
-  @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  // @UseGuards(JwtGuard)
+  // @Roles('admin', 'user')
   @Get()
   async findAll() {
     return this.vacaService.findAll();

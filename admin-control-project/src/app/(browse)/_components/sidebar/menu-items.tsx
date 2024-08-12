@@ -122,6 +122,17 @@ export const MenuItems = () => {
                                 </Link>
                             </Button>
                         </AccordionContent>
+                    <AccordionContent>
+                            <Button
+                                variant={`${clickedButtonId === 'solicitudes-vacaciones' ? 'default' : 'link'}`}
+                                className={`w-full rounded-none`}
+                                onClick={() => handleButtonClick('solicitudes-vacaciones')}
+                            >
+                                <Link href={"/solicitudes-vacaciones"}>
+                                Solicitar Vacaciones
+                                </Link>
+                            </Button>
+                        </AccordionContent>
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
