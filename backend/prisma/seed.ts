@@ -104,7 +104,8 @@ async function main() {
         create: {
           Cod_Departamento: 1,
           Cod_Cargo: 1,
-          Fecha_Contrato: new Date('2022-06-04')
+          Fecha_Contrato: new Date('2022-06-04'),
+          Dias_Vacaciones_Acumulados: 25
         }
       }
     }

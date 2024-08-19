@@ -56,6 +56,14 @@ model Estado_Usuario {
   Usuarios          Usuarios[]
 }
 
+model Permisos {
+  Cod_Permiso       Int        @id @default(autoincrement())
+  Nombre_Permiso    String     @unique @db.VarChar(45)
+  Descripcion       String     @db.VarChar(100)
+  RolePermisos   RolePermisos[]
+}
+
+
 model Roles {
   Cod_Rol            Int        @id @default(autoincrement())
   Rol                String     @unique @db.VarChar(45)
@@ -66,6 +74,16 @@ model Roles {
   Modificado_Por     String     @db.VarChar(45)
   Usuarios           Usuarios[]
   Accesses           Accesses[]
+  RolePermisos       RolePermisos[]
+}
+
+model RolePermisos {
+  Cod_Rol        Int
+  Cod_Permiso    Int
+  Roles          Roles      @relation(fields: [Cod_Rol], references: [Cod_Rol])
+  Permisos    Permisos @relation(fields: [Cod_Permiso], references: [Cod_Permiso])
+
+  @@id([Cod_Rol, Cod_Permiso])
 }
 
 model Accesses {

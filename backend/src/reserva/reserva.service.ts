@@ -2,13 +2,15 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
-import { MailService } from 'src/mail/mail.service';
+import { TwilioService } from 'src/twilio/twilio.service';
+import { addDays, format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 @Injectable()
 export class ReservaService {
   constructor(
     private prisma: PrismaService,
-    private mailService: MailService
+    private twilioService: TwilioService
   ) {}
 
   async create(dto: CreateReservaDto) {
@@ -60,20 +62,37 @@ export class ReservaService {
       where: { Cod_Sala: dto.Cod_Sala }
     });
 
-    const subject = 'Confirmación de Reserva';
-    const text = `Hola Admin, la reserva de la sala ${sala.Nombre_Sala} ha sido creada con éxito.`;
-    const html = `<p>Hola Admin,</p>
-                  <p>La reserva de la sala <strong>${sala.Nombre_Sala}</strong> ha sido creada con éxito.</p>
-                  <p>Fecha: ${dto.Fecha_Reserva}</p>
-                  <p>Hora de Inicio: ${dto.Hora_Inicio}</p>
-                  <p>Hora de Fin: ${dto.Hora_Fin}</p>`;
+    // Enviar SMS al administrador
+    const adminPhoneNumber = '+50489277509';
+    // const fechaObj = new Date(dto.Fecha_Reserva);
+    // const fechaFormateada = () =>
+    //   format(fechaObj, "d 'de' MMMM yyyy", { locale: es });
 
-    await this.mailService.sendMail(
-      'manuel.ruiz@vtv.com.hn',
-      subject,
-      text,
-      html
-    );
+    // Función para formatear la fecha
+    function formatearFecha(fecha: Date): string {
+      // const fechaObj = parseISO(fecha);
+      const fechaConUnDiaMas = addDays(fecha, 1);
+      return format(fechaConUnDiaMas, "d 'de' MMMM yyyy", { locale: es });
+    }
+
+    // Función para formatear la hora
+    function formatearHora(hora: Date): string {
+      // const horaObj = parseISO(hora);
+      return format(hora, 'hh:mm a');
+    }
+
+    const fechaFormateada = formatearFecha(dto.Fecha_Reserva);
+    const horaInicioFormateada = formatearHora(dto.Hora_Inicio);
+    const horaFinFormateada = formatearHora(dto.Hora_Fin);
+
+    const message = `Hola Admin, se ha creado una nueva reserva para la sala ${sala.Nombre_Sala} en la fecha ${fechaFormateada} de ${horaInicioFormateada} a ${horaFinFormateada}.`;
+
+    console.log('ESTE ES EL MENSAJE', message);
+    console.log('ESTE ES LA FECHA FORMATEADA', fechaFormateada);
+    console.log('ESTE ES LA HORA DE INICIO', horaInicioFormateada);
+    console.log('ESTE ES LA HORA DE FIN', horaFinFormateada);
+
+    await this.twilioService.sendSms(adminPhoneNumber, message);
 
     return reserva;
   }

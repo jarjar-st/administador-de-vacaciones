@@ -93,14 +93,19 @@ export const columns: ColumnDef<Solicitud>[] = [
       );
     },
     cell: ({ row }) => {
-      const fechaReserva = new Date(row.original.Fecha_Reserva);
+      const fechaString = row.original.Fecha_Reserva.split('T')[0];
+      const fechaReserva = new Date(fechaString);
   
-      const opciones = { month: 'long', day: 'numeric' } as Intl.DateTimeFormatOptions;
-      const fechaFormateada = fechaReserva.toLocaleDateString('es-ES', opciones);
+      // const opciones = { month: 'long', day: 'numeric' } as Intl.DateTimeFormatOptions;
+      // const fechaFormateada = fechaReserva.toLocaleDateString('es-ES', opciones);
+      // const year = fechaReserva.getUTCFullYear();
+      // const month = String(fechaReserva.getUTCMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+      // const day = String(fechaReserva.getUTCDate()).padStart(2, '0');
+      // const fechaFormateadados = `${year}-${month}-${day}`;
   
       return (
         <div>
-          {fechaFormateada}
+          {fechaString}
         </div>
       );
     }

@@ -21,7 +21,7 @@ const Auth: React.FC<AuthProps> = ({ children, roles }) => {
   }
 
   if (status === "authenticated" && roles && !roles.includes(session?.user?.Rol.Rol)) {
-    return null; // o puedes mostrar un mensaje de acceso denegado aquí
+    return null;
   }
 
   return <>{children}</>;

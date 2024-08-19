@@ -3,10 +3,16 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateVacaDto } from './dto/create-vaca.dto';
 import { UpdateVacaDto } from './dto/update-vaca.dto';
 import { differenceInDays } from 'date-fns';
+import { format, addDays } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Injectable()
 export class VacaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private twilioService: TwilioService
+  ) {}
 
   async create(dto: CreateVacaDto) {
     const diasSolicitados = differenceInDays(dto.Fecha_Fin, dto.Fecha_Inicio);
@@ -25,6 +31,10 @@ export class VacaService {
       throw new BadRequestException('Empleado no encontrado.');
     }
 
+    const nombre = await this.prisma.personas.findUnique({
+      where: { Cod_Persona: empleado.Cod_Persona }
+    });
+
     if (empleado.Dias_Vacaciones_Acumulados < diasSolicitados) {
       throw new BadRequestException(
         `No tienes suficientes días de vacaciones disponibles. ${empleado.Dias_Vacaciones_Acumulados} días disponibles.`
@@ -40,6 +50,26 @@ export class VacaService {
         Estado_Solicitud: dto.Estado_Solicitud || 'Pendiente'
       }
     });
+
+    // Enviar SMS al administrador
+    const adminPhoneNumber = '+50489277509';
+
+    // Función para formatear la fecha
+    function formatearFecha(fecha: Date): string {
+      const fechaConUnDiaMas = addDays(fecha, 1);
+      return format(fechaConUnDiaMas, "d 'de' MMMM yyyy", { locale: es });
+    }
+
+    const fechaInicioFormateada = formatearFecha(dto.Fecha_Inicio);
+    const fechaFinFormateada = formatearFecha(dto.Fecha_Fin);
+
+    const message = `Hola Admin, se ha creado una nueva solicitud de vacaciones para el empleado ${nombre.Nombre} ${nombre.Apellido} desde el ${fechaInicioFormateada} hasta el ${fechaFinFormateada}.`;
+
+    console.log('ESTE ES EL MENSAJE', message);
+    console.log('ESTA ES LA FECHA DE INICIO FORMATEADA', fechaInicioFormateada);
+    console.log('ESTA ES LA FECHA DE FIN FORMATEADA', fechaFinFormateada);
+
+    await this.twilioService.sendSms(adminPhoneNumber, message);
 
     // Actualizar los días de vacaciones acumulados
     // await this.prisma.empleados.update({
