@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
@@ -15,7 +14,7 @@ async function main() {
   });
   const departamentoDos = await prisma.departamento.create({
     data: {
-      Departamento: 'Operaciones Tecnicas'
+      Departamento: 'Operaciones Técnicas'
     }
   });
   const departamentoTres = await prisma.departamento.create({
@@ -32,7 +31,7 @@ async function main() {
   });
   const cargoDos = await prisma.cargo.create({
     data: {
-      Cargo: 'Tecnico'
+      Cargo: 'Técnico'
     }
   });
   const cargoTres = await prisma.cargo.create({
@@ -54,7 +53,7 @@ async function main() {
   });
 
   // Seed Roles
-  const rol = await prisma.roles.create({
+  const rolAdmin = await prisma.roles.create({
     data: {
       Rol: 'admin',
       Descripcion: 'Administrator role',
@@ -67,13 +66,73 @@ async function main() {
   const rolUser = await prisma.roles.create({
     data: {
       Rol: 'user',
-      Descripcion: 'user role',
+      Descripcion: 'User role',
       Fecha_Creacion: new Date(),
       Creado_Por: 'system',
       Fecha_Modificacion: new Date(),
       Modificado_Por: 'system'
     }
   });
+
+  // Seed Permisos
+  const permisos = [
+    {
+      Nombre_Permiso: 'ver seguridad',
+      Descripcion: 'Permite ver el módulo de seguridad'
+    },
+    {
+      Nombre_Permiso: 'ver reserva sala',
+      Descripcion: 'Permite ver el módulo de reserva de sala'
+    },
+    {
+      Nombre_Permiso: 'ver inventario',
+      Descripcion: 'Permite ver el módulo de inventario'
+    },
+    {
+      Nombre_Permiso: 'ver vacaciones',
+      Descripcion: 'Permite ver el módulo de vacaciones'
+    },
+    {
+      Nombre_Permiso: 'ver mantenimiento',
+      Descripcion: 'Permite ver el módulo de mantenimiento'
+    },
+    {
+      Nombre_Permiso: 'manejar vacaciones',
+      Descripcion: 'Permite gestionar solicitudes de vacaciones'
+    },
+    {
+      Nombre_Permiso: 'manejar reservas sala',
+      Descripcion: 'Permite gestionar reservas de sala'
+    },
+    {
+      Nombre_Permiso: 'manejar inventario',
+      Descripcion: 'Permite gestionar el inventario'
+    },
+    {
+      Nombre_Permiso: 'manejar usuarios',
+      Descripcion: 'Permite gestionar usuarios'
+    },
+    {
+      Nombre_Permiso: 'manejar roles',
+      Descripcion: 'Permite gestionar roles y permisos'
+    }
+  ];
+
+  for (const permiso of permisos) {
+    await prisma.permisos.create({ data: permiso });
+  }
+
+  // Assign Permissions to Roles
+  const permisosAdmin = await prisma.permisos.findMany(); // Fetch all permissions
+
+  for (const permiso of permisosAdmin) {
+    await prisma.rolePermisos.create({
+      data: {
+        Cod_Rol: rolAdmin.Cod_Rol,
+        Cod_Permiso: permiso.Cod_Permiso
+      }
+    });
+  }
 
   // Seed Personas
   const persona1 = await prisma.personas.create({
@@ -91,8 +150,8 @@ async function main() {
         create: {
           CorreoElectronico: 'juan.perez@example.com',
           Contrasena: hashedPassword,
-          Cod_EstadoUsuario: 1,
-          Cod_Rol: 1,
+          Cod_EstadoUsuario: estadoUsuario.Cod_EstadoUsuario,
+          Cod_Rol: rolAdmin.Cod_Rol,
           Intentos_Fallidos: '0',
           Fecha_Creacion: new Date(),
           Creado_Por: 'admin',
@@ -102,8 +161,8 @@ async function main() {
       },
       Empleado: {
         create: {
-          Cod_Departamento: 1,
-          Cod_Cargo: 1,
+          Cod_Departamento: departamento.Cod_Departamento,
+          Cod_Cargo: cargo.Cod_Cargo,
           Fecha_Contrato: new Date('2022-06-04'),
           Dias_Vacaciones_Acumulados: 25
         }
@@ -111,20 +170,19 @@ async function main() {
     }
   });
 
-  //Seed Inventario
-
+  // Seed Inventario
   const inventario = await prisma.inventario.create({
     data: {
-      Nombre_Item: 'Microfono',
-      Descripcion: 'Microfono de alta calidad',
+      Nombre_Item: 'Micrófono',
+      Descripcion: 'Micrófono de alta calidad',
       Cantidad: 5
     }
   });
 
   const inventario2 = await prisma.inventario.create({
     data: {
-      Nombre_Item: 'Camara',
-      Descripcion: 'Camara de alta calidad',
+      Nombre_Item: 'Cámara',
+      Descripcion: 'Cámara de alta calidad',
       Cantidad: 5
     }
   });
@@ -154,7 +212,7 @@ async function main() {
     cargoTres,
     estadoUsuario,
     estadoUsuario2,
-    rol,
+    rolAdmin,
     rolUser,
     inventario,
     inventario2,

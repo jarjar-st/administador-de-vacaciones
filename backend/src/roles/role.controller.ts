@@ -1,45 +1,47 @@
-import { Controller, Get, Post, Body, Param, Patch, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Get,
+  Param,
+  Put
+} from '@nestjs/common';
 import { RoleService } from './role.service';
+import { AssignPermissionDto } from './dto/assign-permission.dto';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.createRole(createRoleDto);
+  createRole(@Body() dto: CreateRoleDto) {
+    return this.roleService.createRole(dto);
   }
+
+  @Put('assign-permission')
+  assignPermission(@Body() dto: AssignPermissionDto) {
+    return this.roleService.assignPermission(dto);
+  }
+
+  // @Delete('remove-permission')
+  // removePermission(@Body() dto: AssignPermissionDto) {
+  //   return this.roleService.removePermission(dto);
+  // }
 
   @Get()
-  findAll() {
-    return this.roleService.findAll();
+  getAllRoles() {
+    return this.roleService.getAllRoles();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roleService.findOne(id);
+  @Get('permissions')
+  getAllPermisos() {
+    return this.roleService.getAllPermisos();
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.roleService.updateRole(id, updateRoleDto);
-  }
-
-  @Put(':id/permissions')
-  assignPermissions(
-    @Param('id') id: string,
-    @Body('permissionIds') permissionIds: string[]
-  ) {
-    return this.roleService.assignPermissions(id, permissionIds);
-  }
-
-  @Put(':id/remove-permissions')
-  removePermissions(
-    @Param('id') id: string,
-    @Body('permissionIds') permissionIds: string[]
-  ) {
-    return this.roleService.removePermissions(id, permissionIds);
+  @Get('/:roleId/permissions')
+  getPermissionsByRole(@Param('roleId') roleId: string) {
+    return this.roleService.getPermissionsByRole(Number(roleId));
   }
 }

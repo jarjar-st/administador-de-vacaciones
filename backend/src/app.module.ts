@@ -8,6 +8,7 @@ import { PrismaService } from './prisma.service';
 import { ReservaModule } from './reserva/reserva.module';
 import { InventarioModule } from './Inventario/inventario.module';
 import { VacaModule } from './vacaciones/vaca.module';
+import { RoleModule } from './roles/role.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { VacaModule } from './vacaciones/vaca.module';
     AuthModule,
     ReservaModule,
     InventarioModule,
-    VacaModule
+    VacaModule,
+    RoleModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService]

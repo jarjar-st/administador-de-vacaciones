@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreateRoleDto, UpdateRoleDto, AssignPermissionDto } from './dto';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { AssignPermissionDto } from './dto/assign-permission.dto';
 
 @Injectable()
 export class RoleService {
@@ -11,7 +12,8 @@ export class RoleService {
       data: {
         Rol: dto.Rol,
         Descripcion: dto.Descripcion,
-        Creado_Por: dto.Creado_Por
+        Creado_Por: dto.Creado_Por,
+        Modificado_Por: dto.Modificado_Por
       }
     });
   }
@@ -25,27 +27,33 @@ export class RoleService {
       throw new Error('Role not found');
     }
 
-    return this.prisma.rolePermisos.create({
-      data: {
-        Cod_Rol: dto.Cod_Rol,
-        Cod_Permiso: dto.Cod_Permiso
-      }
+    const permissions = dto.Cod_Permisos.map((Cod_Permiso) => ({
+      Cod_Rol: dto.Cod_Rol,
+      Cod_Permiso
+    }));
+
+    return this.prisma.rolePermisos.createMany({
+      data: permissions
     });
   }
 
-  async removePermission(dto: AssignPermissionDto) {
-    return this.prisma.rolePermisos.delete({
-      where: {
-        Cod_Rol_Cod_Permiso: {
-          Cod_Rol: dto.Cod_Rol,
-          Cod_Permiso: dto.Cod_Permiso
-        }
-      }
-    });
-  }
+  // async removePermission(dto: AssignPermissionDto) {
+  //   return this.prisma.rolePermisos.delete({
+  //     where: {
+  //       Cod_Rol_Cod_Permiso: {
+  //         Cod_Rol: dto.Cod_Rol,
+  //         Cod_Permiso: dto.Cod_Permiso
+  //       }
+  //     }
+  //   });
+  // }
 
   async getAllRoles() {
     return this.prisma.roles.findMany();
+  }
+
+  async getAllPermisos() {
+    return this.prisma.permisos.findMany();
   }
 
   async getPermissionsByRole(Cod_Rol: number) {

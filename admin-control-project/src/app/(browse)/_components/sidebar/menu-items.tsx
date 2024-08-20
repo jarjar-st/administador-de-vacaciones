@@ -49,15 +49,17 @@ export const MenuItems = () => {
                         </AccordionContent>
 
 
-                        {/* <AccordionContent>
+                        <AccordionContent>
                             <Button
                                 variant={`${clickedButtonId === 'seguridad-rol' ? 'default' : 'link'}`}
                                 className={`w-full rounded-none`}
                                 onClick={() => handleButtonClick('seguridad-rol')}
                             >
-                                Rol
+                                <Link href={"/rol"}>
+                                    Rol
+                                </Link>
                             </Button>
-                        </AccordionContent> */}
+                        </AccordionContent>
 
 
                     </AccordionItem>
@@ -68,43 +70,43 @@ export const MenuItems = () => {
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaVideo /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Reserva de Video</span></AccordionTrigger>
 
                     <AccordionContent>
-                            <Button
-                                variant={`${clickedButtonId === 'reserva-sala' ? 'default' : 'link'}`}
-                                className={`w-full rounded-none`}
-                                onClick={() => handleButtonClick('reserva-sala')}
-                            >
-                                <Link href={"/formulario-grabacion"}>
-                                    Reservar Sala
-                                </Link>
-                            </Button>
-                        </AccordionContent>
+                        <Button
+                            variant={`${clickedButtonId === 'reserva-sala' ? 'default' : 'link'}`}
+                            className={`w-full rounded-none`}
+                            onClick={() => handleButtonClick('reserva-sala')}
+                        >
+                            <Link href={"/formulario-grabacion"}>
+                                Reservar Sala
+                            </Link>
+                        </Button>
+                    </AccordionContent>
                     <AccordionContent>
-                            <Button
-                                variant={`${clickedButtonId === 'solicitud-sala' ? 'default' : 'link'}`}
-                                className={`w-full rounded-none`}
-                                onClick={() => handleButtonClick('solicitud-sala')}
-                            >
-                                <Link href={"/solicitudes-grabacion"}>
+                        <Button
+                            variant={`${clickedButtonId === 'solicitud-sala' ? 'default' : 'link'}`}
+                            className={`w-full rounded-none`}
+                            onClick={() => handleButtonClick('solicitud-sala')}
+                        >
+                            <Link href={"/solicitudes-grabacion"}>
                                 solicitudes
-                                </Link>
-                            </Button>
-                        </AccordionContent>
+                            </Link>
+                        </Button>
+                    </AccordionContent>
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaBox /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Inventario</span></AccordionTrigger>
                     <AccordionContent>
-                            <Button
-                                variant={`${clickedButtonId === 'inventario-registro' ? 'default' : 'link'}`}
-                                className={`w-full rounded-none`}
-                                onClick={() => handleButtonClick('inventario-registro')}
-                            >
-                                <Link href={"/formulario-inventario"}>
+                        <Button
+                            variant={`${clickedButtonId === 'inventario-registro' ? 'default' : 'link'}`}
+                            className={`w-full rounded-none`}
+                            onClick={() => handleButtonClick('inventario-registro')}
+                        >
+                            <Link href={"/formulario-inventario"}>
                                 Registrar equipo
-                                </Link>
-                            </Button>
-                        </AccordionContent>
+                            </Link>
+                        </Button>
+                    </AccordionContent>
 
                 </AccordionItem>
             </Accordion>
@@ -112,27 +114,27 @@ export const MenuItems = () => {
                 <AccordionItem value="item-1">
                     <AccordionTrigger><span className=" pl-3 mr-[-20px]"><FaUmbrellaBeach /></span><span className={cn(" font-normal", collapsed ? "hidden" : "block")}>Vacaciones</span></AccordionTrigger>
                     <AccordionContent>
-                            <Button
-                                variant={`${clickedButtonId === 'formulario-vacaciones' ? 'default' : 'link'}`}
-                                className={`w-full rounded-none`}
-                                onClick={() => handleButtonClick('formulario-vacaciones')}
-                            >
-                                <Link href={"/formulario-vacaciones"}>
+                        <Button
+                            variant={`${clickedButtonId === 'formulario-vacaciones' ? 'default' : 'link'}`}
+                            className={`w-full rounded-none`}
+                            onClick={() => handleButtonClick('formulario-vacaciones')}
+                        >
+                            <Link href={"/formulario-vacaciones"}>
                                 Solicitar Vacaciones
-                                </Link>
-                            </Button>
-                        </AccordionContent>
+                            </Link>
+                        </Button>
+                    </AccordionContent>
                     <AccordionContent>
-                            <Button
-                                variant={`${clickedButtonId === 'solicitudes-vacaciones' ? 'default' : 'link'}`}
-                                className={`w-full rounded-none`}
-                                onClick={() => handleButtonClick('solicitudes-vacaciones')}
-                            >
-                                <Link href={"/solicitudes-vacaciones"}>
+                        <Button
+                            variant={`${clickedButtonId === 'solicitudes-vacaciones' ? 'default' : 'link'}`}
+                            className={`w-full rounded-none`}
+                            onClick={() => handleButtonClick('solicitudes-vacaciones')}
+                        >
+                            <Link href={"/solicitudes-vacaciones"}>
                                 Solicitudes de Vacaciones
-                                </Link>
-                            </Button>
-                        </AccordionContent>
+                            </Link>
+                        </Button>
+                    </AccordionContent>
                 </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>

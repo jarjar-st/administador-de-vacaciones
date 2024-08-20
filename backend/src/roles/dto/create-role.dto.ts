@@ -3,12 +3,14 @@ import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 export class CreateRoleDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
-
+  Rol: string;
   @IsString()
   @IsNotEmpty()
-  description: string;
-
-  @IsArray()
-  permisosIds: number[];
+  Descripcion: string;
+  @IsString()
+  @IsNotEmpty()
+  Creado_Por: string;
+  @IsString()
+  @IsNotEmpty()
+  Modificado_Por: string;
 }
