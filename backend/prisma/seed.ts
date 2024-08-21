@@ -73,6 +73,16 @@ async function main() {
       Modificado_Por: 'system'
     }
   });
+  const rolJefe = await prisma.roles.create({
+    data: {
+      Rol: 'jefe',
+      Descripcion: 'Jefe role',
+      Fecha_Creacion: new Date(),
+      Creado_Por: 'system',
+      Fecha_Modificacion: new Date(),
+      Modificado_Por: 'system'
+    }
+  });
 
   // Seed Permisos
   const permisos = [
@@ -214,6 +224,7 @@ async function main() {
     estadoUsuario2,
     rolAdmin,
     rolUser,
+    rolJefe,
     inventario,
     inventario2,
     sala1,

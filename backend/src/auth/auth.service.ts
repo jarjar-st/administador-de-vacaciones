@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { permission } from 'process';
 import { LoginUserDto } from 'src/user/dto/dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 
@@ -15,13 +16,17 @@ export class AuthService {
 
   async login(dto: LoginUserDto) {
     const user = await this.validateUser(dto);
+    console.log('user RECIENTE QUE SOLICITOOOO:', user);
     const payload = {
       email: dto.email,
       sub: {
         name: user.Persona.Nombre,
-        roles: user.Rol.Rol
+        roles: user.Rol.Rol,
+        permisos: user.Rol.RolePermisos.map((rp) => rp.Permisos)
+        // permisos: user.Permisos
       },
-      roles: user.Rol.Rol
+      roles: user.Rol.Rol,
+      permisos: user.Rol.RolePermisos.map((rp) => rp.Permisos)
     };
 
     return {

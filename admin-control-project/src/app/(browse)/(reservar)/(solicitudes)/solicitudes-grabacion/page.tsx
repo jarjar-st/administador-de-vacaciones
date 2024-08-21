@@ -20,11 +20,11 @@ export default async function SolicitudesGrabacionPage() {
 
 
   return (
-    // <Auth roles={['admin']}>
+    <Auth permissions={["ver reserva sala"]}>
       <div className="container mx-auto mt-4">
         <TablaUsuarios />
       </div>
-    // </Auth>
+     </Auth>
 
   )
 }

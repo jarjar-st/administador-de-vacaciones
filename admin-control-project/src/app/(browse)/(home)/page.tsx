@@ -1,9 +1,19 @@
-import Image from "next/image";
 
-export default function Home() {
+import Auth from "@/components/Auth"
+import HomeDashboard from "."
+
+
+
+export default async function SolicitudesVacacionesPage() {
+
+
+
   return (
-    <div>
-      <h1>Home</h1>
-    </div>
-  );
+    // <Auth permissions={['ver vacaciones']}>
+      <div className="container mx-auto mt-4">
+        <HomeDashboard />
+      </div>
+    //  </Auth>
+
+  )
 }

@@ -114,7 +114,7 @@ export class UserService {
     // Encontrar el usuario por Correo electrónico en CorreoElectronico y luego obtener la persona
     const Correo = await this.prisma.usuarios.findFirst({
       where: { CorreoElectronico: email },
-      include: { Persona: true } // Incluye los datos de la persona
+      include: { Persona: true }
     });
 
     if (!Correo) {
@@ -129,9 +129,13 @@ export class UserService {
       // Buscar el usuario asociado a la persona
       const usuario = await this.prisma.usuarios.findFirst({
         where: { Cod_Persona: persona.Cod_Persona },
-        include: { Persona: true, Rol: true, EstadoUsuario: true }
+        include: {
+          Persona: { include: { Empleado: true } },
+          Rol: { include: { RolePermisos: { include: { Permisos: true } } } },
+          EstadoUsuario: true
+        }
       });
-      console.log(usuario);
+      console.log('USUARIO EN SERVICE', usuario);
       return usuario;
     } catch (error) {
       console.error('Error al buscar el usuario:', error);

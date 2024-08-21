@@ -21,7 +21,7 @@ export default async function UsuariosPage() {
 
 
   return (
-    <Auth roles={['admin']}>
+    <Auth permissions={["manejar usuarios"]}>
       <div className="container mx-auto mt-4">
         <TablaUsuarios />
       </div>

@@ -28,7 +28,7 @@ export class ReservaController {
     return this.reservaService.findAllInventario();
   }
   @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'user', 'jefe')
   @Post()
   async create(@Body() createReservaDto: CreateReservaDto) {
     return this.reservaService.create(createReservaDto);
@@ -42,14 +42,14 @@ export class ReservaController {
   }
 
   @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'user', 'jefe')
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.reservaService.findOne(id);
   }
 
   @UseGuards(JwtGuard)
-  @Roles('admin')
+  @Roles('admin', 'jefe')
   @Put('/:id')
   async update(
     @Param('id') id: number,
@@ -60,7 +60,7 @@ export class ReservaController {
   }
 
   @UseGuards(JwtGuard)
-  @Roles('admin')
+  @Roles('admin', 'jefe')
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return this.reservaService.remove(id);

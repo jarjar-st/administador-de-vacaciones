@@ -19,11 +19,11 @@ export default async function SolicitudesVacacionesPage() {
 
 
   return (
-    // <Auth roles={['admin']}>
+    <Auth permissions={['ver vacaciones']}>
       <div className="container mx-auto mt-4">
         <TablaSolicitudes />
       </div>
-    // </Auth>
+     </Auth>
 
   )
 }

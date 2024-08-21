@@ -27,6 +27,7 @@ const vacacionesSchema = z.object({
 const FormVacaciones = () => {
     const { data: session } = useSession();
     const router = useRouter();
+    console.log("AQUI EL USER CON ROLE", session?.user.Rol.RolePermisos.map((rp) => rp.Permisos.Nombre_Permiso));
 
     const form = useForm<z.infer<typeof vacacionesSchema>>({
         resolver: zodResolver(vacacionesSchema),

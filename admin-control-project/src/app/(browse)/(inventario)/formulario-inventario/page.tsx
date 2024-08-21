@@ -20,11 +20,11 @@ export default async function InventarioPage() {
 
 
   return (
-    // <Auth roles={['admin']}>
+    <Auth permissions={["manejar inventario"]}>
       <div className="container mx-auto mt-4">
         <TablaUsuarios />
       </div>
-    // </Auth>
+    </Auth>
 
   )
 }

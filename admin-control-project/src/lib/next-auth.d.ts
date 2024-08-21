@@ -23,6 +23,14 @@ declare module "next-auth" {
         Genero: string;
         Estado_Civil: string;
         Direccion: string;
+        Empleado: {
+          Cod_Empleado: number;
+          Cod_Persona: number;
+          Cod_Departamento: number;
+          Cod_Cargo: number;
+          Fecha_Contrato: string;
+          Dias_Vacaciones_Acumulados: number;
+        };
       };
       Rol: {
         Cod_Rol: number;
@@ -32,11 +40,13 @@ declare module "next-auth" {
         Creado_Por: string;
         Fecha_Modificacion: string;
         Modificado_Por: string;
+        RolePermisos: RolePermiso[];
       };
       EstadoUsuario: {
         Cod_EstadoUsuario: number;
         Descripcion: string;
       };
+
     };
 
     backendTokens: {
@@ -69,6 +79,14 @@ declare module "next-auth/jwt" {
         Genero: string;
         Estado_Civil: string;
         Direccion: string;
+        Empleado: {
+          Cod_Empleado: number;
+          Cod_Persona: number;
+          Cod_Departamento: number;
+          Cod_Cargo: number;
+          Fecha_Contrato: string;
+          Dias_Vacaciones_Acumulados: number;
+        };
       };
       Rol: {
         Cod_Rol: number;
@@ -78,17 +96,17 @@ declare module "next-auth/jwt" {
         Creado_Por: string;
         Fecha_Modificacion: string;
         Modificado_Por: string;
+        RolePermisos: RolePermiso[];
       };
       EstadoUsuario: {
         Cod_EstadoUsuario: number;
         Descripcion: string;
       };
-    };
-
-    backendTokens: {
-      accessToken: string;
-      refreshToken: string;
-      expiresIn: number;
-    };
+      backendTokens: {
+        accessToken: string;
+        refreshToken: string;
+        expiresIn: number;
+      };
+    }
   }
 }

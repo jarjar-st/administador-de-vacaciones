@@ -23,6 +23,7 @@ import {
 import FormUsuario from "./components/form-usuario"
 import { Backend_URL } from "@/lib/constants"
 import { useSession } from "next-auth/react"
+import Auth from "@/components/Auth"
 
 export type Usuarios =
   {
@@ -172,6 +173,7 @@ export const columns: ColumnDef<Usuarios>[] = [
       };
 
       return (
+        <Auth permissions={['manejar usuarios']}>
         <div className="flex justify-center items-center mt-3">
           <Button variant="ghost" className="text-primary">
             <Dialog>
@@ -250,6 +252,7 @@ export const columns: ColumnDef<Usuarios>[] = [
             </Button>
           )}
         </div>
+        </Auth>
       )
     },
   },

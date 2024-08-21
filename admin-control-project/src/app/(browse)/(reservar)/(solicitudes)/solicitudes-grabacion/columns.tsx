@@ -220,7 +220,7 @@ export const columns: ColumnDef<Solicitud>[] = [
       };
 
       return (
-        <Auth roles={['admin']}>
+        <Auth permissions={["manejar reservas sala"]}>
           <div className="flex justify-center items-center mt-3">
             {solicitud.Estado_Reserva === "Pendiente" && (
               <div className=" flex flex-row gap-4">

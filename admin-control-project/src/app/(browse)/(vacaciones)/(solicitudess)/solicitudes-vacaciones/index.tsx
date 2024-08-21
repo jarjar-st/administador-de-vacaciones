@@ -5,7 +5,7 @@ import { Backend_URL } from '@/lib/constants';
 import { Solicitud, columns } from './columns';
 import { useSession } from "next-auth/react";
 
-async function getData(role: string, userId: number): Promise<Solicitud[]> {
+async function getData(role: string, userId: number, department: number): Promise<Solicitud[]> {
     try {
         const response = await fetch(`${Backend_URL}/vacaciones`);
         if (!response.ok) {
@@ -15,8 +15,10 @@ async function getData(role: string, userId: number): Promise<Solicitud[]> {
         console.log('ESTOS SON LOS DATOS asdasdasdasds', data);
 
         // Filtrar las solicitudes según el rol del usuario
-        if (role !== 'admin') {
+        if (role === 'user') {
             data = data.filter(solicitud => solicitud.Cod_Empleado === userId);
+        } else if (role === 'jefe') {
+            data = data.filter(solicitud => solicitud.Empleado.Cod_Departamento === department || solicitud.Cod_Empleado === userId);
         }
 
         console.log('ESTOS SON LAS SOLICITUDES', data);
@@ -33,7 +35,7 @@ export default function TablaSolicitudes() {
     
     const loadData = async () => {
         if (session) {
-            const newData = await getData(session.user.Rol.Rol, session.user.Cod_Usuario);
+            const newData = await getData(session.user.Rol.Rol, session.user.Cod_Usuario, session.user.Persona.Empleado.Cod_Departamento);
             setData(newData);
         }
     }

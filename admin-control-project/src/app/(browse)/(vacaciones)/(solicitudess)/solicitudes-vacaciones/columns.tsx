@@ -286,7 +286,7 @@ export const columns: ColumnDef<Solicitud>[] = [
       };
 
       return (
-        <Auth roles={['admin']}>
+        <Auth  permissions={['manejar vacaciones']}>
           <div className="flex justify-center items-center mt-3">
             {solicitud.Estado_Solicitud === "Pendiente" && (
               <div className=" flex flex-row gap-4">

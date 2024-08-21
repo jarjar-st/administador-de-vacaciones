@@ -19,7 +19,7 @@ export class InventarioController {
   constructor(private readonly inventarioService: InventarioService) {}
 
   @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'user', 'jefe')
   @Post()
   async create(@Body() createInventarioDto: CreateInventarioDto) {
     return this.inventarioService.create(createInventarioDto);
@@ -33,7 +33,7 @@ export class InventarioController {
   }
 
   @UseGuards(JwtGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'user', 'jefe')
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.inventarioService.findOne(id);

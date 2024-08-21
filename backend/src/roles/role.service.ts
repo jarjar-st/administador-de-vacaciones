@@ -24,17 +24,49 @@ export class RoleService {
     });
 
     if (!role) {
-      throw new Error('Role not found');
+      throw new Error('Role no encontrado');
     }
 
-    const permissions = dto.Cod_Permisos.map((Cod_Permiso) => ({
+    const existingPermissions = await this.prisma.rolePermisos.findMany({
+      where: { Cod_Rol: dto.Cod_Rol }
+    });
+
+    const existingPermissionIds = new Set(
+      existingPermissions.map((p) => p.Cod_Permiso)
+    );
+
+    const newPermissions = dto.Cod_Permisos.filter(
+      (Cod_Permiso) => !existingPermissionIds.has(Cod_Permiso)
+    ).map((Cod_Permiso) => ({
       Cod_Rol: dto.Cod_Rol,
       Cod_Permiso
     }));
 
-    return this.prisma.rolePermisos.createMany({
-      data: permissions
-    });
+    const permissionsToRemove = existingPermissions.filter(
+      (p) => !dto.Cod_Permisos.includes(p.Cod_Permiso)
+    );
+
+    // Remover los permisos que no estan en la lista
+    if (permissionsToRemove.length > 0) {
+      await this.prisma.rolePermisos.deleteMany({
+        where: {
+          Cod_Rol: dto.Cod_Rol,
+          Cod_Permiso: { in: permissionsToRemove.map((p) => p.Cod_Permiso) }
+        }
+      });
+    }
+
+    // Agregar los nuevos permisos
+    if (newPermissions.length > 0) {
+      await this.prisma.rolePermisos.createMany({
+        data: newPermissions
+      });
+    }
+
+    return {
+      added: newPermissions.length,
+      removed: permissionsToRemove.length
+    };
   }
 
   // async removePermission(dto: AssignPermissionDto) {
